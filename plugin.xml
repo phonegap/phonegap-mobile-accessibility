@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:rim="http://www.blackberry.com/ns/widgets"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.phonegap.plugin.mobile-accessibility"
+    version="0.1.0">
+    <name>Mobile Accessibility</name>
+    <description>PhoneGap Mobile Accessibility Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>phonegap, mobile accessibility</keywords>
+
+	<engines>
+		<engine name="cordova" version=">=3.0.0" />
+	</engines>
+
+    <js-module src="www/mobile-accessibility.js" name="mobile-accessibility">
+    	<clobbers target="window.MobileAccessibility" />
+    </js-module>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="MobileAccessibility">
+                <param name="ios-package" value="CDVMobileAccessibility" onload="true" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/CDVMobileAccessibility.h" />
+        <source-file src="src/ios/CDVMobileAccessibility.m" />
+    </platform>
+
+    <!-- android -->
+    <platform name="android">
+    </platform>
+
+</plugin>
