@@ -20,8 +20,14 @@
 #import <Cordova/CDVPlugin.h>
 
 @interface CDVMobileAccessibility : CDVPlugin {
+    NSString* callbackId;
 }
 
+@property (strong) NSString* callbackId;
+
 - (void) isVoiceOverRunning:(CDVInvokedUrlCommand*)command;
+- (void) isClosedCaptioningEnabled:(CDVInvokedUrlCommand*)command;
+- (void) start:(CDVInvokedUrlCommand*)command;
+- (void) stop:(CDVInvokedUrlCommand*)command;
 
 @end

@@ -26,6 +26,8 @@
 
 @implementation CDVMobileAccessibility
 
+@synthesize callbackId;
+
 // //////////////////////////////////////////////////
 
 - (id)settingForKey:(NSString*)key
@@ -49,16 +51,75 @@
 
 - (void)dealloc
 {
-    // since this is ARC, remove observers only
+    [self stop:nil];
+}
+
+- (void)onReset
+{
+    [self stop:nil];
 }
 
 // //////////////////////////////////////////////////
 
 #pragma Plugin interface
 
-- (void) isVoiceOverRunning:(CDVInvokedUrlCommand*)command
+- (void)isVoiceOverRunning:(CDVInvokedUrlCommand*)command
 {
-	// TODO:
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:UIAccessibilityIsVoiceOverRunning()];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+}
+
+- (void)isClosedCaptioningEnabled:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:UIAccessibilityIsClosedCaptioningEnabled()];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+}
+
+
+- (void)mobileAccessibilityStatusChanged:(NSNotification *)notification
+{
+    if (self.callbackId) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getMobileAccessibilityStatus]];
+        [result setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+    }
+}
+
+/* Get the current mobile accessibility status. */
+- (NSDictionary*)getMobileAccessibilityStatus
+{
+    NSMutableDictionary* mobileAccessibilityData = [NSMutableDictionary dictionaryWithCapacity:2];
+    [mobileAccessibilityData setObject:[NSNumber numberWithBool:UIAccessibilityIsVoiceOverRunning()] forKey:@"isVoiceOverRunning"];
+    [mobileAccessibilityData setObject:[NSNumber numberWithBool:UIAccessibilityIsClosedCaptioningEnabled()] forKey:@"isClosedCaptioningEnabled"];
+    return mobileAccessibilityData;
+}
+
+
+/* turn on MobileAccessibility monitoring*/
+- (void)start:(CDVInvokedUrlCommand*)command
+{
+    self.callbackId = command.callbackId;
+        
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:)
+        name:UIAccessibilityVoiceOverStatusChanged object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:)
+        name:UIAccessibilityClosedCaptioningStatusDidChangeNotification object:nil];
+}
+
+- (void)stop:(CDVInvokedUrlCommand*)command
+{
+    // callback one last time to clear the callback function on JS side
+    if (self.callbackId)
+    {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getMobileAccessibilityStatus]];
+        [result setKeepCallbackAsBool:NO];
+        [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+    }
+    self.callbackId = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+        name:UIAccessibilityVoiceOverStatusChanged object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+        name:UIAccessibilityClosedCaptioningStatusDidChangeNotification object:nil];
 }
 
 @end
