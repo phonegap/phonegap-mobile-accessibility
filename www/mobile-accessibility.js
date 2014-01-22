@@ -24,14 +24,14 @@ var argscheck = require('cordova/argscheck'),
     exec = require('cordova/exec');
 
 var MobileAccessibility = function() {
-    this._isVoiceOverRunning = false;
+    this._isScreenReaderRunning = false;
     this._isClosedCaptioningEnabled = false;
     this._isGuidedAccessEnabled = false;
     this._isInvertColorsEnabled = false;
     this._isMonoAudioEnabled = false;
     // Create new event handlers on the window (returns a channel instance)
     this.channels = {
-        voiceoverstatuschanged:cordova.addWindowEventHandler("voiceoverstatuschanged"),
+        screenreaderstatuschanged:cordova.addWindowEventHandler("screenreaderstatuschanged"),
         closedcaptioningstatusdidchange:cordova.addWindowEventHandler("closedcaptioningstatusdidchange"),
         guidedaccessstatusdidchange:cordova.addWindowEventHandler("guidedaccessstatusdidchange"),
         invertcolorsstatusdidchange:cordova.addWindowEventHandler("invertcolorsstatusdidchange"),
@@ -41,13 +41,13 @@ var MobileAccessibility = function() {
         this.channels[key].onHasSubscribersChange = MobileAccessibility.onHasSubscribersChange;
     }
 };
-        
+
 /**
  * @private
  * @ignore
  */
 function handlers() {
-    return mobileAccessibility.channels.voiceoverstatuschanged.numHandlers +
+    return mobileAccessibility.channels.screenreaderstatuschanged.numHandlers +
            mobileAccessibility.channels.closedcaptioningstatusdidchange.numHandlers +
            mobileAccessibility.channels.invertcolorsstatusdidchange.numHandlers +
            mobileAccessibility.channels.monoaudiostatusdidchange.numHandlers +
@@ -56,7 +56,7 @@ function handlers() {
 
 /**
  *
- * Event handlers for when callbacks get registered for mobileAccessibility.
+ * Event handlers for when callback methods get registered for mobileAccessibility.
  * Keep track of how many handlers we have so we can start and stop the native MobileAccessibility listener
  * appropriately.
  * @private
@@ -65,7 +65,6 @@ function handlers() {
 MobileAccessibility.onHasSubscribersChange = function() {
     // If we just registered the first handler, make sure native listener is started.
     if (this.numHandlers === 1 && handlers() === 1) {
-               console.log("MobileAccessibility.onHasSubscribersChange "+handlers());
         exec(mobileAccessibility._status, mobileAccessibility._error, "MobileAccessibility", "start", []);
     } else if (handlers() === 0) {
         exec(null, null, "MobileAccessibility", "stop", []);
@@ -73,59 +72,68 @@ MobileAccessibility.onHasSubscribersChange = function() {
 };
 
 /**
- * Asynchronous call to native MobileAccessibility detemine if VoiceOver is running.
- * @param {function} callback A callback method to recieve the asynchronous result from the native MobileAccessibility.
+ * Asynchronous call to native MobileAccessibility determine if a screen reader is running.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
-MobileAccessibility.prototype.isVoiceOverRunning = function(callback) {
-    exec(callback, null, "MobileAccessibility", "isVoiceOverRunning", []);
+MobileAccessibility.prototype.isScreenReaderRunning = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isScreenReaderRunning", []);
 };
+MobileAccessibility.prototype.isVoiceOverRunning = MobileAccessibility.prototype.isScreenReaderRunning;
 
 /**
- * Asynchronous call to native MobileAccessibility to detemine if closed captioning is enabled.
- * @param {function} callback A callback method to recieve the asynchronous result from the native MobileAccessibility.
+ * Asynchronous call to native MobileAccessibility to determine if closed captioning is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isClosedCaptioningEnabled = function(callback) {
     exec(callback, null, "MobileAccessibility", "isClosedCaptioningEnabled", []);
 };
 
 /**
- * Asynchronous call to native MobileAccessibility to detemine if the display colors have been inverted.
- * @param {function} callback A callback method to recieve the asynchronous result from the native MobileAccessibility.
+ * Asynchronous call to native MobileAccessibility to determine if the display colors have been inverted.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isInvertColorsEnabled = function(callback) {
     exec(callback, null, "MobileAccessibility", "isInvertColorsEnabled", []);
 };
 
 /**
- * Asynchronous call to native MobileAccessibility to detemine if mono audio is enabled.
- * @param {function} callback A callback method to recieve the asynchronous result from the native MobileAccessibility.
+ * Asynchronous call to native MobileAccessibility to determine if mono audio is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isMonoAudioEnabled = function(callback) {
     exec(callback, null, "MobileAccessibility", "isMonoAudioEnabled", []);
 };
 
 /**
- * Asynchronous call to native MobileAccessibility to detemine if Guided Access is enabled.
- * @param {function} callback A callback method to recieve the asynchronous result from the native MobileAccessibility.
+ * Asynchronous call to native MobileAccessibility to determine if Guided Access is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isGuidedAccessEnabled = function(callback) {
     exec(callback, null, "MobileAccessibility", "isGuidedAccessEnabled", []);
 };
 
+MobileAccessibility.prototype.MobileAccessibilityNotifications = {
+    SCREEN_CHANGED : 1000,
+    LAYOUT_CHANGED : 1001,
+    ANNOUNCEMENT : 1008,
+    PAGE_SCROLLED : 1009
+}
+               
 /**
- * Posts an announcement notification with a string for VoiceOver to announce, if it is running.
- * @param {string} string A string to be announced by VoiceOver.
- * @param {function} callback A callback method to recieve the asynchronous result from the native MobileAccessibility, when the announcement is finished, the function should expect an object containing the stringValue that was voiced and a boolean indicating that the announcement wasSuccessful.
+ * Posts a notification with a string for a screen reader to announce, if it is running.
+ * @param {uint} mobileAccessibilityNotification A numeric constant for the type of notification to send. Constants are defined in MobileAccessibility.MobileAccessibilityNotifications.
+ * @param {string} string A string to be announced by a screen reader.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility, when the announcement is finished, the function should expect an object containing the stringValue that was voiced and a boolean indicating that the announcement wasSuccessful.
  */
-MobileAccessibility.prototype.postAnnouncementNotification = function(string, callback) {
-    exec(callback, null, "MobileAccessibility", "postAnnouncementNotification", [string]);
+MobileAccessibility.prototype.postNotification = function(mobileAccessibilityNotification, string, callback) {
+    exec(callback, null, "MobileAccessibility", "postNotification", [mobileAccessibilityNotification, string]);
 };
 
 /**
- * Callback from native MobileAccessibility returning an which describes the status of iOS accessibility features.
+ * Callback from native MobileAccessibility returning an which describes the status of MobileAccessibility features.
  *
  * @param {Object} info
- * @config {Boolean} [isVoiceOverRunning] Boolean to indicate VoiceOver status.
+ * @config {Boolean} [isScreenReaderRunning] Boolean to indicate screen reader status.
  * @config {Boolean} [isClosedCaptioningEnabled] Boolean to indicate closed captioning status.
  * @config {Boolean} [isGuidedAccessEnabled] Boolean to indicate guided access status.
  * @config {Boolean} [isInvertColorsEnabled] Boolean to indicate invert colors status.
@@ -133,9 +141,9 @@ MobileAccessibility.prototype.postAnnouncementNotification = function(string, ca
  */
 MobileAccessibility.prototype._status = function(info) {
     if (info) {
-        if (mobileAccessibility._isVoiceOverRunning !== info.isVoiceOverRunning) {
-            cordova.fireWindowEvent("voiceoverstatuschanged", info);
-            mobileAccessibility._isVoiceOverRunning = info.isVoiceOverRunning;
+        if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {
+            cordova.fireWindowEvent("screenreaderstatuschanged", info);
+            mobileAccessibility._isScreenReaderRunning = info.isScreenReaderRunning;
         }
         if (mobileAccessibility._isClosedCaptioningEnabled !== info.isClosedCaptioningEnabled) {
             cordova.fireWindowEvent("closedcaptioningstatusdidchange", info);
@@ -164,5 +172,5 @@ MobileAccessibility.prototype._error = function(e) {
 };
 
 var mobileAccessibility = new MobileAccessibility();
-
+               
 module.exports = mobileAccessibility;

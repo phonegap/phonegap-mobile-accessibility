@@ -30,7 +30,7 @@
 @synthesize callbackId;
 @synthesize commandCallbackId;
 @synthesize voiceOverRunning;
-@synthesize closeCaptioningEnabled;
+@synthesize closedCaptioningEnabled;
 @synthesize guidedAccessEnabled;
 @synthesize invertColorsEnabled;
 @synthesize monoAudioEnabled;
@@ -93,7 +93,7 @@
 
 #pragma Plugin interface
 
-- (void)isVoiceOverRunning:(CDVInvokedUrlCommand*)command
+- (void)isScreenReaderRunning:(CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
         self.voiceOverRunning = UIAccessibilityIsVoiceOverRunning();
@@ -105,8 +105,8 @@
 - (void)isClosedCaptioningEnabled:(CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
-        self.closeCaptioningEnabled = [self getClosedCaptioningEnabledStatus];
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:self.closeCaptioningEnabled];
+        self.closedCaptioningEnabled = [self getClosedCaptioningEnabledStatus];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:self.closedCaptioningEnabled];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     }];
 }
@@ -138,22 +138,46 @@
     }];
 }
 
-- (void)postAnnouncementNotification:(CDVInvokedUrlCommand *)command
+- (void)postNotification:(CDVInvokedUrlCommand *)command
 {
     CDVPluginResult* result = nil;
-    NSString* notificationString = [command.arguments objectAtIndex:0];
+    uint32_t notificationType = [[command.arguments objectAtIndex:0] intValue];
+    NSString* notificationString = [command.arguments objectAtIndex:1];
+    
+    if (notificationString == nil) {
+        notificationString = @"";
+    }
     
     if (UIAccessibilityIsVoiceOverRunning() &&
-        notificationString != nil && [notificationString length] > 0) {
-        self.commandCallbackId = command.callbackId;
+        [self isValidNotificationType:notificationType]) {
         [self.commandDelegate runInBackground:^{
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityAnnouncementDidFinish:) name:UIAccessibilityAnnouncementDidFinishNotification object:nil];
-            UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, notificationString);
+            if (notificationType == UIAccessibilityAnnouncementNotification) {
+                self.commandCallbackId = command.callbackId;
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityAnnouncementDidFinish:) name:UIAccessibilityAnnouncementDidFinishNotification object:nil];
+            }
+            
+            UIAccessibilityPostNotification(notificationType, notificationString);
+            
+            if (notificationType != UIAccessibilityAnnouncementNotification) {
+                NSMutableDictionary* data = [NSMutableDictionary dictionaryWithCapacity:2];
+                [data setObject:notificationString forKey:@"stringValue"];
+                [data setObject:@"true" forKey:@"wasSuccessful"];
+                CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            }
         }];
     } else {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     }
+}
+
+- (BOOL)isValidNotificationType:(uint32_t)notificationType
+{
+    return (notificationType == UIAccessibilityScreenChangedNotification
+            || notificationType == UIAccessibilityLayoutChangedNotification
+            || notificationType == UIAccessibilityAnnouncementNotification
+            || notificationType == UIAccessibilityPageScrolledNotification);
 }
 
 - (void)mobileAccessibilityAnnouncementDidFinish:(NSNotification *)dict
@@ -203,14 +227,14 @@
 - (NSDictionary*)getMobileAccessibilityStatus
 {
     self.voiceOverRunning = UIAccessibilityIsVoiceOverRunning();
-    self.closeCaptioningEnabled = [self getClosedCaptioningEnabledStatus];
+    self.closedCaptioningEnabled = [self getClosedCaptioningEnabledStatus];
     self.guidedAccessEnabled = UIAccessibilityIsGuidedAccessEnabled();
     self.invertColorsEnabled = UIAccessibilityIsInvertColorsEnabled();
     self.monoAudioEnabled = UIAccessibilityIsMonoAudioEnabled();
     
     NSMutableDictionary* mobileAccessibilityData = [NSMutableDictionary dictionaryWithCapacity:5];
-    [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.voiceOverRunning] forKey:@"isVoiceOverRunning"];
-    [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.closeCaptioningEnabled] forKey:@"isClosedCaptioningEnabled"];
+    [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.voiceOverRunning] forKey:@"isScreenReaderRunning"];
+    [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.closedCaptioningEnabled] forKey:@"isClosedCaptioningEnabled"];
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.guidedAccessEnabled] forKey:@"isGuidedAccessEnabled"];
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.invertColorsEnabled] forKey:@"isInvertColorsEnabled"];
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.monoAudioEnabled] forKey:@"isMonoAudioEnabled"];

@@ -23,7 +23,7 @@
     NSString* callbackId;
     NSString* commandCallbackId;
     BOOL voiceOverRunning;
-    BOOL closeCaptioningEnabled;
+    BOOL closedCaptioningEnabled;
     BOOL guidedAccessEnabled;
     BOOL invertColorsEnabled;
     BOOL monoAudioEnabled;
@@ -32,17 +32,17 @@
 @property (strong) NSString* callbackId;
 @property (strong) NSString* commandCallbackId;
 @property BOOL voiceOverRunning;
-@property BOOL closeCaptioningEnabled;
+@property BOOL closedCaptioningEnabled;
 @property BOOL guidedAccessEnabled;
 @property BOOL invertColorsEnabled;
 @property BOOL monoAudioEnabled;
 
-- (void) isVoiceOverRunning:(CDVInvokedUrlCommand*)command;
+- (void) isScreenReaderRunning:(CDVInvokedUrlCommand*)command;
 - (void) isClosedCaptioningEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isGuidedAccessEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isInvertColorsEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isMonoAudioEnabled:(CDVInvokedUrlCommand*)command;
-- (void) postAnnouncementNotification:(CDVInvokedUrlCommand*)command;
+- (void) postNotification:(CDVInvokedUrlCommand*)command;
 - (void) start:(CDVInvokedUrlCommand*)command;
 - (void) stop:(CDVInvokedUrlCommand*)command;
 
