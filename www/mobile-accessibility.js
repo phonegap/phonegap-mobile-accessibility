@@ -21,7 +21,8 @@
 
 var argscheck = require('cordova/argscheck'),
     utils = require('cordova/utils'),
-    exec = require('cordova/exec');
+    exec = require('cordova/exec'),
+    device = require('org.apache.cordova.device.device');
 
 var MobileAccessibility = function() {
     this._isScreenReaderRunning = false;
@@ -29,13 +30,15 @@ var MobileAccessibility = function() {
     this._isGuidedAccessEnabled = false;
     this._isInvertColorsEnabled = false;
     this._isMonoAudioEnabled = false;
+    this._isTouchExplorationEnabled = false;
     // Create new event handlers on the window (returns a channel instance)
     this.channels = {
         screenreaderstatuschanged:cordova.addWindowEventHandler("screenreaderstatuschanged"),
         closedcaptioningstatusdidchange:cordova.addWindowEventHandler("closedcaptioningstatusdidchange"),
         guidedaccessstatusdidchange:cordova.addWindowEventHandler("guidedaccessstatusdidchange"),
         invertcolorsstatusdidchange:cordova.addWindowEventHandler("invertcolorsstatusdidchange"),
-        monoaudiostatusdidchange:cordova.addWindowEventHandler("monoaudiostatusdidchange")
+        monoaudiostatusdidchange:cordova.addWindowEventHandler("monoaudiostatusdidchange"),
+        touchexplorationstatechanged:cordova.addWindowEventHandler("touchexplorationstatechanged")
     };
     for (var key in this.channels) {
         this.channels[key].onHasSubscribersChange = MobileAccessibility.onHasSubscribersChange;
@@ -51,7 +54,8 @@ function handlers() {
            mobileAccessibility.channels.closedcaptioningstatusdidchange.numHandlers +
            mobileAccessibility.channels.invertcolorsstatusdidchange.numHandlers +
            mobileAccessibility.channels.monoaudiostatusdidchange.numHandlers +
-           mobileAccessibility.channels.guidedaccessstatusdidchange.numHandlers;
+           mobileAccessibility.channels.guidedaccessstatusdidchange.numHandlers +
+           mobileAccessibility.channels.touchexplorationstatechanged.numHandlers;
 };
 
 /**
@@ -76,9 +80,25 @@ MobileAccessibility.onHasSubscribersChange = function() {
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isScreenReaderRunning = function(callback) {
-    exec(callback, null, "MobileAccessibility", "isScreenReaderRunning", []);
+	exec(function(bool) {
+		if (device.platform==="Android") {
+   			if (typeof cvox === "undefined") {
+   				if (bool) {
+   					console.warn('A screen reader is running but ChromeVox has failed to initialize.');
+   				}
+   			} else {
+   				// activate or deactivate ChromeVox based on whether or not or not the screen reader is running.
+   				cvox.ChromeVox.host.activateOrDeactivateChromeVox(bool);
+   			}
+		}
+		callback(Boolean(bool));
+	}, null, "MobileAccessibility", "isScreenReaderRunning", []);
 };
 MobileAccessibility.prototype.isVoiceOverRunning = MobileAccessibility.prototype.isScreenReaderRunning;
+MobileAccessibility.prototype.isTalkBackRunning = MobileAccessibility.prototype.isScreenReaderRunning;
+MobileAccessibility.prototype.isChromeVoxActive = function () {
+	return typeof cvox !== "undefined" && cvox.ChromeVox.host.ttsLoaded() && cvox.Api.isChromeVoxActive();
+};
 
 /**
  * Asynchronous call to native MobileAccessibility to determine if closed captioning is enabled.
@@ -112,6 +132,14 @@ MobileAccessibility.prototype.isGuidedAccessEnabled = function(callback) {
     exec(callback, null, "MobileAccessibility", "isGuidedAccessEnabled", []);
 };
 
+/**
+ * Asynchronous call to native MobileAccessibility to determine if Touch Exploration is enabled on Android.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isTouchExplorationEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isTouchExplorationEnabled", []);
+};
+
 MobileAccessibility.prototype.MobileAccessibilityNotifications = {
     SCREEN_CHANGED : 1000,
     LAYOUT_CHANGED : 1001,
@@ -130,19 +158,55 @@ MobileAccessibility.prototype.postNotification = function(mobileAccessibilityNot
 };
 
 /**
+ * Speaks the given string, and if ChromeVox is active, it will use the specified queueMode and properties.
+ * @param {string} string A string to be announced by a screen reader.
+ * @param {number} [queueMode] Optional number. Valid modes are 0 for flush; 1 for queue.
+ * @param {Object} [properties] Speech properties to use for this utterance.
+ */
+MobileAccessibility.prototype.speak = function(string, queueMode, properties) {
+	if (this.isChromeVoxActive()) {
+		cvox.ChromeVox.tts.speak(string, queueMode, properties);
+	} else {
+		exec(null, null, "MobileAccessibility", "postNotification", [mobileAccessibility.MobileAccessibilityNotifications.ANNOUNCEMENT, string]);
+	}
+}
+
+/**
+ * Stops speech.
+ */
+MobileAccessibility.prototype.stop = function() {
+	if (this.isChromeVoxActive()) {
+		cvox.ChromeVox.tts.stop();
+	} else {
+		exec(null, null, "MobileAccessibility", "postNotification", [mobileAccessibility.MobileAccessibilityNotifications.ANNOUNCEMENT]);
+	}
+}
+
+/**
  * Callback from native MobileAccessibility returning an which describes the status of MobileAccessibility features.
  *
  * @param {Object} info
  * @config {Boolean} [isScreenReaderRunning] Boolean to indicate screen reader status.
  * @config {Boolean} [isClosedCaptioningEnabled] Boolean to indicate closed captioning status.
- * @config {Boolean} [isGuidedAccessEnabled] Boolean to indicate guided access status.
- * @config {Boolean} [isInvertColorsEnabled] Boolean to indicate invert colors status.
- * @config {Boolean} [isMonoAudioEnabled] Boolean to indicate mono audio status.
+ * @config {Boolean} [isGuidedAccessEnabled] Boolean to indicate guided access status (ios).
+ * @config {Boolean} [isInvertColorsEnabled] Boolean to indicate invert colors status (ios).
+ * @config {Boolean} [isMonoAudioEnabled] Boolean to indicate mono audio status (ios).
+ * @config {Boolean} [isTouchExplorationEnabled] Boolean to indicate touch exploration status (android).
  */
 MobileAccessibility.prototype._status = function(info) {
     if (info) {
-        if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {
-            cordova.fireWindowEvent("screenreaderstatuschanged", info);
+    	if (device.platform === "Android") {
+   			if (typeof cvox === "undefined") {
+   				if (info.isScreenReaderRunning) {
+   					console.warn('A screen reader is running but ChromeVox has failed to initialize.');
+   				}
+   			} else {
+   				// activate or deactivate ChromeVox based on whether or not or not the screen reader is running.
+   				cvox.ChromeVox.host.activateOrDeactivateChromeVox(info.isScreenReaderRunning);
+   			}
+		}
+    	if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {	
+        	cordova.fireWindowEvent("screenreaderstatuschanged", info);
             mobileAccessibility._isScreenReaderRunning = info.isScreenReaderRunning;
         }
         if (mobileAccessibility._isClosedCaptioningEnabled !== info.isClosedCaptioningEnabled) {
@@ -161,6 +225,10 @@ MobileAccessibility.prototype._status = function(info) {
            cordova.fireWindowEvent("monoaudiostatusdidchange", info);
            mobileAccessibility._isMonoAudioEnabled = info.isMonoAudioEnabled;
         }
+        if (mobileAccessibility._isTouchExplorationEnabled !== info.isTouchExplorationEnabled) {
+            cordova.fireWindowEvent("touchexplorationstatechanged", info);
+            mobileAccessibility._isTouchExplorationEnabled = info.isTouchExplorationEnabled;
+         }
     }
 };
 

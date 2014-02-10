@@ -18,3 +18,7 @@ DerivedData
 .idea/
 
 .project
+
+src/android/.classpath
+
+src/.gitignore

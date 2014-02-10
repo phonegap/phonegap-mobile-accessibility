@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,10 +12,12 @@
 	<engines>
 		<engine name="cordova" version=">=3.0.0" />
 	</engines>
-
+	
     <js-module src="www/mobile-accessibility.js" name="mobile-accessibility">
     	<clobbers target="window.MobileAccessibility" />
     </js-module>
+   
+   <dependency id="org.apache.cordova.device" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git" />
 
     <!-- ios -->
     <platform name="ios">
@@ -32,6 +33,18 @@
 
     <!-- android -->
     <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="MobileAccessibility" >
+                <param name="android-package" value="com.phonegap.plugin.mobileaccessibility.MobileAccessibility"/>
+            </feature>
+            <access origin="https://ssl.gstatic.com/accessibility/javascript/android/*" />
+        </config-file>
+  		<config-file target="assets/www/config.xml" parent="/*">
+            <feature name="MobileAccessibility" >
+                <param name="android-package" value="com.phonegap.plugin.mobileaccessibility.MobileAccessibility"/>
+            </feature>
+            <access origin="https://ssl.gstatic.com/accessibility/javascript/android/*" />
+        </config-file>
+        <source-file src="src/android/com/phonegap/plugin/mobileaccessibility/MobileAccessibility.java" target-dir="src/com/phonegap/plugin/mobileaccessibility" />
     </platform>
-
 </plugin>
