@@ -81,16 +81,7 @@ MobileAccessibility.onHasSubscribersChange = function() {
  */
 MobileAccessibility.prototype.isScreenReaderRunning = function(callback) {
 	exec(function(bool) {
-		if (device.platform==="Android") {
-   			if (typeof cvox === "undefined") {
-   				if (bool) {
-   					console.warn('A screen reader is running but ChromeVox has failed to initialize.');
-   				}
-   			} else {
-   				// activate or deactivate ChromeVox based on whether or not or not the screen reader is running.
-   				cvox.ChromeVox.host.activateOrDeactivateChromeVox(bool);
-   			}
-		}
+		mobileAccessibility.activateOrDeactivateChromeVox(bool);
 		callback(Boolean(bool));
 	}, null, "MobileAccessibility", "isScreenReaderRunning", []);
 };
@@ -98,6 +89,21 @@ MobileAccessibility.prototype.isVoiceOverRunning = MobileAccessibility.prototype
 MobileAccessibility.prototype.isTalkBackRunning = MobileAccessibility.prototype.isScreenReaderRunning;
 MobileAccessibility.prototype.isChromeVoxActive = function () {
 	return typeof cvox !== "undefined" && cvox.ChromeVox.host.ttsLoaded() && cvox.Api.isChromeVoxActive();
+};
+MobileAccessibility.prototype.activateOrDeactivateChromeVox = function(bool) {
+	if (device.platform !== "Android") return;
+	if (typeof cvox === "undefined") {
+		if (bool) {
+			console.warn('A screen reader is running but ChromeVox has failed to initialize.');
+		}
+	} else {
+		// activate or deactivate ChromeVox based on whether or not or not the screen reader is running.
+		try {
+			cvox.ChromeVox.host.activateOrDeactivateChromeVox(bool);
+		} catch (err) {
+			console.error(err);
+		}
+	}
 };
 
 /**
@@ -195,16 +201,7 @@ MobileAccessibility.prototype.stop = function() {
  */
 MobileAccessibility.prototype._status = function(info) {
     if (info) {
-    	if (device.platform === "Android") {
-   			if (typeof cvox === "undefined") {
-   				if (info.isScreenReaderRunning) {
-   					console.warn('A screen reader is running but ChromeVox has failed to initialize.');
-   				}
-   			} else {
-   				// activate or deactivate ChromeVox based on whether or not or not the screen reader is running.
-   				cvox.ChromeVox.host.activateOrDeactivateChromeVox(info.isScreenReaderRunning);
-   			}
-		}
+    	mobileAccessibility.activateOrDeactivateChromeVox(info.isScreenReaderRunning);
     	if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {	
         	cordova.fireWindowEvent("screenreaderstatuschanged", info);
             mobileAccessibility._isScreenReaderRunning = info.isScreenReaderRunning;
