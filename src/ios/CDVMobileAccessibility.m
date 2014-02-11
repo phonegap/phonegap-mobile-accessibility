@@ -142,7 +142,7 @@
 {
     CDVPluginResult* result = nil;
     uint32_t notificationType = [[command.arguments objectAtIndex:0] intValue];
-    NSString* notificationString = [command.arguments objectAtIndex:1];
+    NSString* notificationString = [command.arguments count] > 1 ? [command.arguments objectAtIndex:1] : @"";
     
     if (notificationString == nil) {
         notificationString = @"";

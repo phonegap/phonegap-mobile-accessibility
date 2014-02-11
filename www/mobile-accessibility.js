@@ -34,10 +34,10 @@ var MobileAccessibility = function() {
     // Create new event handlers on the window (returns a channel instance)
     this.channels = {
         screenreaderstatuschanged:cordova.addWindowEventHandler("screenreaderstatuschanged"),
-        closedcaptioningstatusdidchange:cordova.addWindowEventHandler("closedcaptioningstatusdidchange"),
-        guidedaccessstatusdidchange:cordova.addWindowEventHandler("guidedaccessstatusdidchange"),
-        invertcolorsstatusdidchange:cordova.addWindowEventHandler("invertcolorsstatusdidchange"),
-        monoaudiostatusdidchange:cordova.addWindowEventHandler("monoaudiostatusdidchange"),
+        closedcaptioningstatuschanged:cordova.addWindowEventHandler("closedcaptioningstatuschanged"),
+        guidedaccessstatuschanged:cordova.addWindowEventHandler("guidedaccessstatuschanged"),
+        invertcolorsstatuschanged:cordova.addWindowEventHandler("invertcolorsstatuschanged"),
+        monoaudiostatuschanged:cordova.addWindowEventHandler("monoaudiostatuschanged"),
         touchexplorationstatechanged:cordova.addWindowEventHandler("touchexplorationstatechanged")
     };
     for (var key in this.channels) {
@@ -51,10 +51,10 @@ var MobileAccessibility = function() {
  */
 function handlers() {
     return mobileAccessibility.channels.screenreaderstatuschanged.numHandlers +
-           mobileAccessibility.channels.closedcaptioningstatusdidchange.numHandlers +
-           mobileAccessibility.channels.invertcolorsstatusdidchange.numHandlers +
-           mobileAccessibility.channels.monoaudiostatusdidchange.numHandlers +
-           mobileAccessibility.channels.guidedaccessstatusdidchange.numHandlers +
+           mobileAccessibility.channels.closedcaptioningstatuschanged.numHandlers +
+           mobileAccessibility.channels.invertcolorsstatuschanged.numHandlers +
+           mobileAccessibility.channels.monoaudiostatuschanged.numHandlers +
+           mobileAccessibility.channels.guidedaccessstatuschanged.numHandlers +
            mobileAccessibility.channels.touchexplorationstatechanged.numHandlers;
 };
 
@@ -203,28 +203,28 @@ MobileAccessibility.prototype._status = function(info) {
     if (info) {
     	mobileAccessibility.activateOrDeactivateChromeVox(info.isScreenReaderRunning);
     	if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {	
-        	cordova.fireWindowEvent("screenreaderstatuschanged", info);
             mobileAccessibility._isScreenReaderRunning = info.isScreenReaderRunning;
+        	cordova.fireWindowEvent("screenreaderstatuschanged", info);
         }
         if (mobileAccessibility._isClosedCaptioningEnabled !== info.isClosedCaptioningEnabled) {
-            cordova.fireWindowEvent("closedcaptioningstatusdidchange", info);
             mobileAccessibility._isClosedCaptioningEnabled = info.isClosedCaptioningEnabled;
+            cordova.fireWindowEvent("closedcaptioningstatuschanged", info);
         }
         if (mobileAccessibility._isGuidedAccessEnabled !== info.isGuidedAccessEnabled) {
-            cordova.fireWindowEvent("guidedaccessstatusdidchange", info);
             mobileAccessibility._isGuidedAccessEnabled = info.isGuidedAccessEnabled;
+            cordova.fireWindowEvent("guidedaccessstatuschanged", info);
         }
         if (mobileAccessibility._isInvertColorsEnabled !== info.isInvertColorsEnabled) {
-            cordova.fireWindowEvent("invertcolorsstatusdidchange", info);
             mobileAccessibility._isInvertColorsEnabled = info.isInvertColorsEnabled;
+            cordova.fireWindowEvent("invertcolorsstatuschanged", info);
         }
         if (mobileAccessibility._isMonoAudioEnabled !== info.isMonoAudioEnabled) {
-           cordova.fireWindowEvent("monoaudiostatusdidchange", info);
            mobileAccessibility._isMonoAudioEnabled = info.isMonoAudioEnabled;
+           cordova.fireWindowEvent("monoaudiostatuschanged", info);
         }
         if (mobileAccessibility._isTouchExplorationEnabled !== info.isTouchExplorationEnabled) {
-            cordova.fireWindowEvent("touchexplorationstatechanged", info);
             mobileAccessibility._isTouchExplorationEnabled = info.isTouchExplorationEnabled;
+            cordova.fireWindowEvent("touchexplorationstatechanged", info);
          }
     }
 };
