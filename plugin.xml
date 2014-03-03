@@ -9,14 +9,14 @@
     <license>Apache 2.0</license>
     <keywords>phonegap, mobile accessibility</keywords>
 
-	<engines>
-		<engine name="cordova" version=">=3.0.0" />
-	</engines>
-	
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
     <js-module src="www/mobile-accessibility.js" name="mobile-accessibility">
-    	<clobbers target="window.MobileAccessibility" />
+        <clobbers target="window.MobileAccessibility" />
     </js-module>
-   
+
    <dependency id="org.apache.cordova.device" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git" />
    <dependency id="org.apache.cordova.network-information" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-network-information.git" />
 
@@ -27,6 +27,7 @@
                 <param name="ios-package" value="CDVMobileAccessibility" onload="true" />
             </feature>
         </config-file>
+        <framework src="MediaAccessibility.framework" weak="true" />
         <header-file src="src/ios/CDVMobileAccessibility.h" />
         <source-file src="src/ios/CDVMobileAccessibility.m" />
     </platform>
