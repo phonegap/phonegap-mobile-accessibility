@@ -15,4 +15,6 @@ public abstract class AbstractMobileAccessibilityHelper {
 	public abstract void addStateChangeListeners();
 	public abstract void removeStateChangeListeners();
 	public abstract void announceForAccessibility(CharSequence text);
+	public abstract int getTextZoom();
+	public abstract void setTextZoom(int textZoom);
 }

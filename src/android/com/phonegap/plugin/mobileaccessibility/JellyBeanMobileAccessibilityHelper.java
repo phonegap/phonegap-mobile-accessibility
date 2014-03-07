@@ -1,5 +1,7 @@
 package com.phonegap.plugin.mobileaccessibility;
 
+import com.phonegap.plugin.mobileaccessibility.MobileAccessibility;
+
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
@@ -7,6 +9,12 @@ import android.view.accessibility.AccessibilityEvent;
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class JellyBeanMobileAccessibilityHelper extends
 		IceCreamSandwichMobileAccessibilityHelper {
+	
+	@Override
+	public void initialize(MobileAccessibility mobileAccessibility) {
+		super.initialize(mobileAccessibility);
+		mParent = mobileAccessibility.webView.getParentForAccessibility();
+	}
 	
 	@Override
 	public void announceForAccessibility(CharSequence text) {

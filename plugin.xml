@@ -17,8 +17,8 @@
         <clobbers target="window.MobileAccessibility" />
     </js-module>
 
-   <dependency id="org.apache.cordova.device" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git" />
-   <dependency id="org.apache.cordova.network-information" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-network-information.git" />
+   <dependency id="org.apache.cordova.device" url="https://github.com/apache/cordova-plugin-device.git" />
+   <dependency id="org.apache.cordova.network-information" url="https://github.com/apache/cordova-plugin-network-information.git" />
 
     <!-- ios -->
     <platform name="ios">

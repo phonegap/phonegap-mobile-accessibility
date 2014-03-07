@@ -33,6 +33,7 @@ var MobileAccessibility = function() {
     this._isInvertColorsEnabled = false;
     this._isMonoAudioEnabled = false;
     this._isTouchExplorationEnabled = false;
+    this._usePreferredTextZoom = false;
     // Create new event handlers on the window (returns a channel instance)
     this.channels = {
         screenreaderstatuschanged:cordova.addWindowEventHandler("screenreaderstatuschanged"),
@@ -109,6 +110,22 @@ MobileAccessibility.prototype.activateOrDeactivateChromeVox = function(bool) {
 			console.error(err);
 		}
 	}
+	
+	if (bool) {
+		if (!mobileAccessibility.hasOrientationChangeListener) {
+			window.addEventListener("orientationchange", mobileAccessibility.onOrientationChange);
+			mobileAccessibility.hasOrientationChangeListener = true;
+		}
+	} else if(mobileAccessibility.hasOrientationChangeListener) {
+		window.removeEventListener("orientationchange", mobileAccessibility.onOrientationChange);
+		mobileAccessibility.hasOrientationChangeListener = false;
+	}
+};
+
+MobileAccessibility.prototype.hasOrientationChangeListener = false;
+MobileAccessibility.prototype.onOrientationChange = function(event) {
+	if (!mobileAccessibility.isChromeVoxActive()) return;
+	cvox.ChromeVox.navigationManager.updateIndicator();
 };
 
 MobileAccessibility.prototype.scriptInjected = false;
@@ -174,6 +191,42 @@ MobileAccessibility.prototype.isGuidedAccessEnabled = function(callback) {
  */
 MobileAccessibility.prototype.isTouchExplorationEnabled = function(callback) {
     exec(callback, null, "MobileAccessibility", "isTouchExplorationEnabled", []);
+};
+
+MobileAccessibility.prototype.getTextZoom = function(callback) {
+	exec(callback, null, "MobileAccessibility", "getTextZoom", []);
+};
+
+MobileAccessibility.prototype.setTextZoom = function(textZoom, callback) {
+	exec(callback, null, "MobileAccessibility", "setTextZoom", [textZoom]);
+};
+
+MobileAccessibility.prototype.updateTextZoom = function() {
+	exec(null, null, "MobileAccessibility", "updateTextZoom", []);
+};
+
+MobileAccessibility.prototype.usePreferredTextZoom = function(bool) {
+	var currentValue = window.localStorage.getItem("MobileAccessibility.usePreferredTextZoom") === "true";
+	
+	if (arguments.length === 0) {
+		return currentValue;
+	}
+	
+	if (currentValue != bool) {
+		window.localStorage.setItem("MobileAccessibility.usePreferredTextZoom", bool);
+	}
+	
+	document.removeEventListener("resume", mobileAccessibility.updateTextZoom);
+	
+	if (bool) {
+		// console.log("We should update the text zoom at this point: " + bool)
+		document.addEventListener("resume", mobileAccessibility.updateTextZoom, false);
+		mobileAccessibility.updateTextZoom();
+	} else {
+		mobileAccessibility.setTextZoom(100);
+	}
+	
+	return Boolean(bool);
 };
 
 MobileAccessibility.prototype.MobileAccessibilityNotifications = {

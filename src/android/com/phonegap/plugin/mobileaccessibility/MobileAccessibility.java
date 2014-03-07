@@ -22,6 +22,7 @@ public class MobileAccessibility extends CordovaPlugin {
 	protected boolean mClosedCaptioningEnabled = false;
 	protected boolean mTouchExplorationEnabled = false;
 	protected boolean mCachedIsScreenReaderRunning = false;
+	protected float mFontScale = 1;
 			    
 	@Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -58,6 +59,20 @@ public class MobileAccessibility extends CordovaPlugin {
 					}
 	        	}
 	        	return true;
+	        } else if(action.equals("getTextZoom")) {
+	        	getTextZoom(callbackContext);
+	        	return true;
+	        } else if(action.equals("setTextZoom")) {
+	        	if (args.length() > 0) {
+					int textZoom = args.getInt(0);
+					if (textZoom > 0) {
+						setTextZoom(textZoom, callbackContext);
+					}
+	        	}
+	        	return true;
+	        } else if(action.equals("updateTextZoom")) {
+	        	updateTextZoom();
+	        	return true;
 	        } else if (action.equals("start")) {
 	        	start(callbackContext);
 		    	return true;
@@ -73,13 +88,13 @@ public class MobileAccessibility extends CordovaPlugin {
     }
 	
 	/**
-     * Called when the system is about to start resuming a previous activity.
+     * Called when the system is about to pause the current activity
      *
      * @param multitasking		Flag indicating if multitasking is turned on for app
      */
 	@Override
     public void onPause(boolean multitasking) {
-		Log.i("MobileAccessibility", "onPause");
+		//Log.i("MobileAccessibility", "onPause");
 		mCachedIsScreenReaderRunning = mIsScreenReaderRunning;
     }
 
@@ -90,9 +105,9 @@ public class MobileAccessibility extends CordovaPlugin {
      */
 	@Override
     public void onResume(boolean multitasking) {
-		Log.i("MobileAccessibility", "onResume");
+		//Log.i("MobileAccessibility", "onResume");
 		if (mIsScreenReaderRunning && !mCachedIsScreenReaderRunning) {
-			Log.i("MobileAccessibility", "Reloading page on reload because the Accessibility State has changed.");
+			//Log.i("MobileAccessibility", "Reloading page on reload because the Accessibility State has changed.");
 			mCachedIsScreenReaderRunning = mIsScreenReaderRunning;
 			stop();
 			cordova.getActivity().runOnUiThread(new Runnable() {
@@ -100,9 +115,7 @@ public class MobileAccessibility extends CordovaPlugin {
 			    		webView.reload();
 			        }
 			    });
-			
 		}
-		
     }
 
     /**
@@ -198,6 +211,45 @@ public class MobileAccessibility extends CordovaPlugin {
 		    });
 	}
 	
+	public void getTextZoom(final CallbackContext callbackContext) {
+		cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+            	final int textZoom = mMobileAccessibilityHelper.getTextZoom();
+            	if (callbackContext != null) {
+        			callbackContext.success(textZoom);
+        		}
+            }
+        });
+	}
+	
+	public void setTextZoom(final int textZoom, final CallbackContext callbackContext) {
+		cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+				mMobileAccessibilityHelper.setTextZoom(textZoom);
+				if (callbackContext != null) {
+					callbackContext.success(mMobileAccessibilityHelper.getTextZoom());
+				};
+            }
+        });
+	}
+	
+	public void setTextZoom(final int textZoom) {
+		cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+            	mMobileAccessibilityHelper.setTextZoom(textZoom);
+            }
+        });
+	}
+	
+	public void updateTextZoom() {
+    	float fontScale = cordova.getActivity().getResources().getConfiguration().fontScale;
+    	if (fontScale != mFontScale) {
+    		mFontScale = fontScale;
+    	}
+    	int textZoom = Math.round(mFontScale * 100);
+		setTextZoom(textZoom);	
+	}
+	
 	protected void sendMobileAccessibilityStatusChangedCallback() {
 		if (this.mCallbackContext != null) {
 	    	PluginResult result = new PluginResult(PluginResult.Status.OK, getMobileAccessibilityStatus());
@@ -213,9 +265,9 @@ public class MobileAccessibility extends CordovaPlugin {
 			status.put("isScreenReaderRunning", mIsScreenReaderRunning);
 			status.put("isClosedCaptioningEnabled", mClosedCaptioningEnabled);
 			status.put("isTouchExplorationEnabled", mTouchExplorationEnabled);
-			Log.i("MobileAccessibility",  "MobileAccessibility.isScreenReaderRunning == " + status.getString("isScreenReaderRunning") +
-					"\nMobileAccessibility.isClosedCaptioningEnabled == " + status.getString("isClosedCaptioningEnabled") +
-					"\nMobileAccessibility.isTouchExplorationEnabled == " + status.getString("isTouchExplorationEnabled") );
+			//Log.i("MobileAccessibility",  "MobileAccessibility.isScreenReaderRunning == " + status.getString("isScreenReaderRunning") +
+			//		"\nMobileAccessibility.isClosedCaptioningEnabled == " + status.getString("isClosedCaptioningEnabled") +
+			//		"\nMobileAccessibility.isTouchExplorationEnabled == " + status.getString("isTouchExplorationEnabled") );
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}	
@@ -223,14 +275,14 @@ public class MobileAccessibility extends CordovaPlugin {
 	}
 	
 	protected void start(CallbackContext callbackContext) {
-		Log.i("MobileAccessibility", "MobileAccessibility.start");
+		//Log.i("MobileAccessibility", "MobileAccessibility.start");
 		mCallbackContext = callbackContext;
 		mMobileAccessibilityHelper.addStateChangeListeners();
 		sendMobileAccessibilityStatusChangedCallback();
 	}
 	
 	protected void stop() {
-		Log.i("MobileAccessibility", "MobileAccessibility.stop");
+		//Log.i("MobileAccessibility", "MobileAccessibility.stop");
 		if (mCallbackContext != null) {
 			sendMobileAccessibilityStatusChangedCallback();
 			mMobileAccessibilityHelper.removeStateChangeListeners();

@@ -3,6 +3,7 @@ package com.phonegap.plugin.mobileaccessibility;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.util.Log;
 import android.view.accessibility.AccessibilityManager.AccessibilityStateChangeListener;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -27,6 +28,18 @@ public class IceCreamSandwichMobileAccessibilityHelper extends
 	public void removeStateChangeListeners() {
 		mAccessibilityManager.removeAccessibilityStateChangeListener(mAccessibilityStateChangeListener);
 		mAccessibilityStateChangeListener = null;
+	}
+	
+	@Override
+	public int getTextZoom() {
+		return mWebView.getSettings().getTextZoom();
+	}
+	
+	@Override
+	public void setTextZoom(int textZoom) {
+		final int zoom = textZoom;
+		//Log.i("MobileAccessibility", "setTextZoom(" + zoom + ")");
+		mWebView.getSettings().setTextZoom(zoom);
 	}
 	
 	protected class InternalAccessibilityStateChangeListener 
