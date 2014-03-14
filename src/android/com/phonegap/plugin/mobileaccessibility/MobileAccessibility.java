@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Build;
-import android.util.Log;
 
 /**
  * This class provides information on the status of native accessibility services to JavaScript.

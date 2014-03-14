@@ -3,7 +3,6 @@ package com.phonegap.plugin.mobileaccessibility;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.TargetApi;
 import android.os.Build;
-import android.util.Log;
 import android.view.accessibility.AccessibilityManager.AccessibilityStateChangeListener;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)

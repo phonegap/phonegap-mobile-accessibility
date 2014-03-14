@@ -4,7 +4,6 @@ package com.phonegap.plugin.mobileaccessibility;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.webkit.WebSettings;
