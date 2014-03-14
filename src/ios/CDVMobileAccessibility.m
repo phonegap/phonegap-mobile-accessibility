@@ -22,7 +22,9 @@
 #import <MediaAccessibility/MediaAccessibility.h>
 
 @interface CDVMobileAccessibility ()
-// add any property overrides
+    // add any property overrides
+    -(int) mGetTextZoom;
+    -(void) mSetTextZoom:(int)zoom;
 @end
 
 @implementation CDVMobileAccessibility
@@ -34,6 +36,9 @@
 @synthesize guidedAccessEnabled;
 @synthesize invertColorsEnabled;
 @synthesize monoAudioEnabled;
+@synthesize mFontScale;
+
+#define iOS7Delta (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ) ? 20 : 0 )
 
 // //////////////////////////////////////////////////
 
@@ -53,7 +58,11 @@
         // set your setting, other init here
     }
     
+    mFontScale = 1;
+
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
 }
 
 // //////////////////////////////////////////////////
@@ -137,6 +146,65 @@
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     }];
 }
+
+-(float) mGetFontScale
+{
+    float fontScale = 1;
+    if (iOS7Delta)  {
+        fontScale = [[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize] / BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE;
+    }
+    return fontScale;
+}
+
+-(int) mGetTextZoom
+{
+    int zoom = round(mFontScale * 100);
+    // NSLog(@"mGetTextZoom %d%%'", zoom);
+    return zoom;
+}
+
+- (void) getTextZoom:(CDVInvokedUrlCommand *)command
+{
+    int zoom = [self mGetTextZoom];
+    [self.commandDelegate runInBackground:^{
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: zoom];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }];
+}
+
+-(void) mSetTextZoom:(int)zoom
+{
+    // NSLog(@"mSetTextZoom %d%%'", zoom);
+    mFontScale = zoom/100;
+    if (iOS7Delta)  {
+        NSString *jsString = [[NSString alloc] initWithFormat:@"document.getElementsByTagName('body')[0].style.webkitTextSizeAdjust= '%d%%'", zoom];
+        [[self webView] stringByEvaluatingJavaScriptFromString:jsString];
+    }
+}
+
+- (void) setTextZoom:(CDVInvokedUrlCommand *)command
+{
+    if (command != nil && [command.arguments count] > 0) {
+        int zoom = [[command.arguments objectAtIndex:0] intValue];
+        [self mSetTextZoom:zoom];
+    
+        [self.commandDelegate runInBackground:^{
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:zoom];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        }];
+    }
+}
+
+- (void)updateTextZoom:(CDVInvokedUrlCommand *)command
+{
+    float fontScale = [self mGetFontScale];
+    if (fontScale != mFontScale) {
+        mFontScale = fontScale;
+    }
+    // NSLog(@"updateTextZoom %d%%'", [self mGetTextZoom]);
+    [self mSetTextZoom:[self mGetTextZoom]];
+}
+
 
 - (void)postNotification:(CDVInvokedUrlCommand *)command
 {

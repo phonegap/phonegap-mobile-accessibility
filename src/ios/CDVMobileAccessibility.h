@@ -19,6 +19,8 @@
 
 #import <Cordova/CDVPlugin.h>
 
+static const int BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE = 16;
+
 @interface CDVMobileAccessibility : CDVPlugin {
     NSString* callbackId;
     NSString* commandCallbackId;
@@ -36,14 +38,21 @@
 @property BOOL guidedAccessEnabled;
 @property BOOL invertColorsEnabled;
 @property BOOL monoAudioEnabled;
+@property float mFontScale;
+
 
 - (void) isScreenReaderRunning:(CDVInvokedUrlCommand*)command;
 - (void) isClosedCaptioningEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isGuidedAccessEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isInvertColorsEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isMonoAudioEnabled:(CDVInvokedUrlCommand*)command;
+- (void) getTextZoom:(CDVInvokedUrlCommand*)command;
+- (void) setTextZoom:(CDVInvokedUrlCommand*)command;
+- (void) updateTextZoom:(CDVInvokedUrlCommand*)command;
 - (void) postNotification:(CDVInvokedUrlCommand*)command;
 - (void) start:(CDVInvokedUrlCommand*)command;
 - (void) stop:(CDVInvokedUrlCommand*)command;
 
 @end
+
+
