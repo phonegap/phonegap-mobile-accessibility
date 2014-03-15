@@ -35,6 +35,16 @@
     <!-- android -->
     <platform name="android">
         <config-file target="config.xml" parent="/*">
+            <!-- for some reason, these dependant feature tags, Device and NetworkStatus,
+                are not being added to the /res/xml/config.xml when the project is built,
+                so I've added them here to make sure they make it into the build -->
+            <feature name="Device">
+                <param name="android-package" value="org.apache.cordova.device.Device" />
+            </feature>
+            <feature name="NetworkStatus">
+                <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager"/>
+            </feature>
+
             <access origin="https://ssl.gstatic.com/accessibility/javascript/android/*" />
             <feature name="MobileAccessibility" >
                 <param name="android-package" value="com.phonegap.plugin.mobileaccessibility.MobileAccessibility"/>
