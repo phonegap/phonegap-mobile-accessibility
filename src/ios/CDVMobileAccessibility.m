@@ -1,21 +1,23 @@
-/*
- Licensed to the Apache Software Foundation (ASF) under one
- or more contributor license agreements.  See the NOTICE file
- distributed with this work for additional information
- regarding copyright ownership.  The ASF licenses this file
- to you under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance
- with the License.  You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing,
- software distributed under the License is distributed on an
- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- KIND, either express or implied.  See the License for the
- specific language governing permissions and limitations
- under the License.
- */
+/**
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
 
 #import "CDVMobileAccessibility.h"
 #import <Cordova/CDVAvailability.h>
@@ -23,8 +25,8 @@
 
 @interface CDVMobileAccessibility ()
     // add any property overrides
-    -(int) mGetTextZoom;
-    -(void) mSetTextZoom:(int)zoom;
+    -(double) mGetTextZoom;
+    -(void) mSetTextZoom:(double)zoom;
 @end
 
 @implementation CDVMobileAccessibility
@@ -57,12 +59,12 @@
     if ([self settingForKey:setting]) {
         // set your setting, other init here
     }
-    
+
     mFontScale = 1;
 
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    
+
 }
 
 // //////////////////////////////////////////////////
@@ -147,37 +149,37 @@
     }];
 }
 
--(float) mGetFontScale
+-(double) mGetFontScale
 {
-    float fontScale = 1;
+    double fontScale = 1;
     if (iOS7Delta)  {
         fontScale = [[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize] / BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE;
     }
     return fontScale;
 }
 
--(int) mGetTextZoom
+-(double) mGetTextZoom
 {
-    int zoom = round(mFontScale * 100);
-    // NSLog(@"mGetTextZoom %d%%'", zoom);
+    double zoom = round(mFontScale * 100);
+    // NSLog(@"mGetTextZoom %f%%", zoom);
     return zoom;
 }
 
 - (void) getTextZoom:(CDVInvokedUrlCommand *)command
 {
-    int zoom = [self mGetTextZoom];
+    double zoom = [self mGetTextZoom];
     [self.commandDelegate runInBackground:^{
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt: zoom];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble: zoom];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     }];
 }
 
--(void) mSetTextZoom:(int)zoom
+-(void) mSetTextZoom:(double)zoom
 {
-    // NSLog(@"mSetTextZoom %d%%'", zoom);
+    // NSLog(@"mSetTextZoom %f%%'", zoom);
     mFontScale = zoom/100;
     if (iOS7Delta)  {
-        NSString *jsString = [[NSString alloc] initWithFormat:@"document.getElementsByTagName('body')[0].style.webkitTextSizeAdjust= '%d%%'", zoom];
+        NSString *jsString = [[NSString alloc] initWithFormat:@"document.getElementsByTagName('body')[0].style.webkitTextSizeAdjust= '%f%%'", zoom];
         [[self webView] stringByEvaluatingJavaScriptFromString:jsString];
     }
 }
@@ -185,11 +187,11 @@
 - (void) setTextZoom:(CDVInvokedUrlCommand *)command
 {
     if (command != nil && [command.arguments count] > 0) {
-        int zoom = [[command.arguments objectAtIndex:0] intValue];
+        double zoom = [[command.arguments objectAtIndex:0] doubleValue];
         [self mSetTextZoom:zoom];
-    
+
         [self.commandDelegate runInBackground:^{
-            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:zoom];
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:zoom];
             [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         }];
     }
@@ -201,8 +203,16 @@
     if (fontScale != mFontScale) {
         mFontScale = fontScale;
     }
-    // NSLog(@"updateTextZoom %d%%'", [self mGetTextZoom]);
-    [self mSetTextZoom:[self mGetTextZoom]];
+    double zoom = [self mGetTextZoom];
+    // NSLog(@"updateTextZoom %d%%'", zoom);
+    [self mSetTextZoom:zoom];
+
+    if (command != nil && command.callbackId != nil) {
+        [self.commandDelegate runInBackground:^{
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:zoom];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        }];
+    }
 }
 
 
@@ -211,11 +221,11 @@
     CDVPluginResult* result = nil;
     uint32_t notificationType = [[command.arguments objectAtIndex:0] intValue];
     NSString* notificationString = [command.arguments count] > 1 ? [command.arguments objectAtIndex:1] : @"";
-    
+
     if (notificationString == nil) {
         notificationString = @"";
     }
-    
+
     if (UIAccessibilityIsVoiceOverRunning() &&
         [self isValidNotificationType:notificationType]) {
         [self.commandDelegate runInBackground:^{
@@ -223,9 +233,9 @@
                 self.commandCallbackId = command.callbackId;
                 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityAnnouncementDidFinish:) name:UIAccessibilityAnnouncementDidFinishNotification object:nil];
             }
-            
+
             UIAccessibilityPostNotification(notificationType, notificationString);
-            
+
             if (notificationType != UIAccessibilityAnnouncementNotification) {
                 NSMutableDictionary* data = [NSMutableDictionary dictionaryWithCapacity:2];
                 [data setObject:notificationString forKey:@"stringValue"];
@@ -251,14 +261,14 @@
 - (void)mobileAccessibilityAnnouncementDidFinish:(NSNotification *)dict
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIAccessibilityAnnouncementDidFinishNotification object:nil];
-    
+
     NSString* valueSpoken = [[dict userInfo] objectForKey:UIAccessibilityAnnouncementKeyStringValue];
     NSString* wasSuccessful = [[dict userInfo] objectForKey:UIAccessibilityAnnouncementKeyWasSuccessful];
-    
+
     NSMutableDictionary* data = [NSMutableDictionary dictionaryWithCapacity:2];
     [data setObject:valueSpoken forKey:@"stringValue"];
     [data setObject:wasSuccessful forKey:@"wasSuccessful"];
-    
+
     if (self.commandCallbackId) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
         [self.commandDelegate sendPluginResult:result callbackId:self.commandCallbackId];
@@ -299,7 +309,7 @@
     self.guidedAccessEnabled = UIAccessibilityIsGuidedAccessEnabled();
     self.invertColorsEnabled = UIAccessibilityIsInvertColorsEnabled();
     self.monoAudioEnabled = UIAccessibilityIsMonoAudioEnabled();
-    
+
     NSMutableDictionary* mobileAccessibilityData = [NSMutableDictionary dictionaryWithCapacity:5];
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.voiceOverRunning] forKey:@"isScreenReaderRunning"];
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.closedCaptioningEnabled] forKey:@"isClosedCaptioningEnabled"];
@@ -320,7 +330,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:) name:UIAccessibilityGuidedAccessStatusDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:) name:UIAccessibilityInvertColorsStatusDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:) name:UIAccessibilityMonoAudioStatusDidChangeNotification object:nil];
-        
+
         // Update the callback on start
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getMobileAccessibilityStatus]];
         [result setKeepCallbackAsBool:YES];
