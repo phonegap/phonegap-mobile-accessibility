@@ -17,6 +17,10 @@
         <clobbers target="window.MobileAccessibility" />
     </js-module>
 
+    <js-module src="www/MobileAccessibilityNotifications.js" name="MobileAccessibilityNotifications">
+        <clobbers target="MobileAccessibilityNotifications" />
+    </js-module>
+
    <dependency id="org.apache.cordova.device" url="https://github.com/apache/cordova-plugin-device.git" />
    <dependency id="org.apache.cordova.network-information" url="https://github.com/apache/cordova-plugin-network-information.git" />
 

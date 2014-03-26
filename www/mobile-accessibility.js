@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -24,7 +24,8 @@ var argscheck = require('cordova/argscheck'),
     exec = require('cordova/exec'),
     device = require('org.apache.cordova.device.device'),
     network = require('org.apache.cordova.network-information.network'),
-    connection = require('org.apache.cordova.network-information.Connection');
+    connection = require('org.apache.cordova.network-information.Connection'),
+    MobileAccessibilityNotifications = require('com.phonegap.plugin.mobile-accessibility.MobileAccessibilityNotifications');
 
 var MobileAccessibility = function() {
     this._isScreenReaderRunning = false;
@@ -36,12 +37,12 @@ var MobileAccessibility = function() {
     this._usePreferredTextZoom = false;
     // Create new event handlers on the window (returns a channel instance)
     this.channels = {
-        screenreaderstatuschanged:cordova.addWindowEventHandler("screenreaderstatuschanged"),
-        closedcaptioningstatuschanged:cordova.addWindowEventHandler("closedcaptioningstatuschanged"),
-        guidedaccessstatuschanged:cordova.addWindowEventHandler("guidedaccessstatuschanged"),
-        invertcolorsstatuschanged:cordova.addWindowEventHandler("invertcolorsstatuschanged"),
-        monoaudiostatuschanged:cordova.addWindowEventHandler("monoaudiostatuschanged"),
-        touchexplorationstatechanged:cordova.addWindowEventHandler("touchexplorationstatechanged")
+        screenreaderstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED),
+        closedcaptioningstatuschanged   : cordova.addWindowEventHandler(MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED),
+        guidedaccessstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED),
+        invertcolorsstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED),
+        monoaudiostatuschanged          : cordova.addWindowEventHandler(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED),
+        touchexplorationstatechanged    : cordova.addWindowEventHandler(MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED)
     };
     for (var key in this.channels) {
         this.channels[key].onHasSubscribersChange = MobileAccessibility.onHasSubscribersChange;
@@ -83,72 +84,84 @@ MobileAccessibility.onHasSubscribersChange = function() {
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isScreenReaderRunning = function(callback) {
-	exec(function(bool) {
-		mobileAccessibility.activateOrDeactivateChromeVox(bool);
-		callback(Boolean(bool));
-	}, null, "MobileAccessibility", "isScreenReaderRunning", []);
+    exec(function(bool) {
+        mobileAccessibility.activateOrDeactivateChromeVox(bool);
+        callback(Boolean(bool));
+    }, null, "MobileAccessibility", "isScreenReaderRunning", []);
 };
-MobileAccessibility.prototype.isVoiceOverRunning = MobileAccessibility.prototype.isScreenReaderRunning;
-MobileAccessibility.prototype.isTalkBackRunning = MobileAccessibility.prototype.isScreenReaderRunning;
+MobileAccessibility.prototype.isVoiceOverRunning = function(callback) {
+    if (device.platform.toLowerCase() === "ios") {
+        MobileAccessibility.prototype.isScreenReaderRunning(callback);
+    } else {
+        callback(false);
+    }
+};
+MobileAccessibility.prototype.isTalkBackRunning = function(callback) {
+    if (device.platform.toLowerCase() === "android" || device.platform.toLowerCase() === "amazon-fireos") {
+        MobileAccessibility.prototype.isScreenReaderRunning(callback);
+    } else {
+        callback(false);
+    }
+};
 MobileAccessibility.prototype.isChromeVoxActive = function () {
-	return typeof cvox !== "undefined" && cvox.ChromeVox.host.ttsLoaded() && cvox.Api.isChromeVoxActive();
+    return typeof cvox !== "undefined" && cvox.ChromeVox.host.ttsLoaded() && cvox.Api.isChromeVoxActive();
 };
 MobileAccessibility.prototype.activateOrDeactivateChromeVox = function(bool) {
-	if (device.platform !== "Android") return;
-	if (typeof cvox === "undefined") {
-		if (bool) {
-			console.warn('A screen reader is running but ChromeVox has failed to initialize.');
-			if (navigator.connection.type === Connection.UNKNOWN || navigator.connection.type === Connection.NONE) {
-				mobileAccessibility.injectLocalAndroidVoxScript();
-			}
-		}
-	} else {
-		// activate or deactivate ChromeVox based on whether or not or not the screen reader is running.
-		try {
-			cvox.ChromeVox.host.activateOrDeactivateChromeVox(bool);
-		} catch (err) {
-			console.error(err);
-		}
-	}
-	
-	if (bool) {
-		if (!mobileAccessibility.hasOrientationChangeListener) {
-			window.addEventListener("orientationchange", mobileAccessibility.onOrientationChange);
-			mobileAccessibility.hasOrientationChangeListener = true;
-		}
-	} else if(mobileAccessibility.hasOrientationChangeListener) {
-		window.removeEventListener("orientationchange", mobileAccessibility.onOrientationChange);
-		mobileAccessibility.hasOrientationChangeListener = false;
-	}
+    if (device.platform !== "Android") return;
+    if (typeof cvox === "undefined") {
+        if (bool) {
+            console.warn('A screen reader is running but ChromeVox has failed to initialize.');
+            if (navigator.connection.type === Connection.UNKNOWN || navigator.connection.type === Connection.NONE) {
+                mobileAccessibility.injectLocalAndroidVoxScript();
+            }
+        }
+    } else {
+        // activate or deactivate ChromeVox based on whether or not or not the screen reader is running.
+        try {
+            cvox.ChromeVox.host.activateOrDeactivateChromeVox(bool);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    if (bool) {
+        if (!mobileAccessibility.hasOrientationChangeListener) {
+            window.addEventListener("orientationchange", mobileAccessibility.onOrientationChange);
+            mobileAccessibility.hasOrientationChangeListener = true;
+        }
+    } else if(mobileAccessibility.hasOrientationChangeListener) {
+        window.removeEventListener("orientationchange", mobileAccessibility.onOrientationChange);
+        mobileAccessibility.hasOrientationChangeListener = false;
+    }
 };
 
 MobileAccessibility.prototype.hasOrientationChangeListener = false;
 MobileAccessibility.prototype.onOrientationChange = function(event) {
-	if (!mobileAccessibility.isChromeVoxActive()) return;
-	cvox.ChromeVox.navigationManager.updateIndicator();
+    if (!mobileAccessibility.isChromeVoxActive()) return;
+    cvox.ChromeVox.navigationManager.updateIndicator();
 };
 
 MobileAccessibility.prototype.scriptInjected = false;
 MobileAccessibility.prototype.injectLocalAndroidVoxScript = function() {
-	var versionsplit = device.version.split('.');
-	if (device.platform !== "Android" ||
-		!(versionsplit[0] > 4 || (versionsplit[0] == 4 && versionsplit[1] >= 1))  ||
-		typeof cvox !== "undefined" || mobileAccessibility.scriptInjected) return;
-	var script = document.createElement('script');
+    var versionsplit = device.version.split('.');
+    if (device.platform !== "Android" ||
+        !(versionsplit[0] > 4 || (versionsplit[0] == 4 && versionsplit[1] >= 1))  ||
+        typeof cvox !== "undefined" || mobileAccessibility.scriptInjected) return;
+    var script = document.createElement('script');
     script.type = 'text/javascript';
     script.async = true;
     script.onload = function(){
-    	// console.log(this.src + ' has loaded');
-    	if (mobileAccessibility.isChromeVoxActive()) {
-    		cordova.fireWindowEvent("screenreaderstatuschanged", {
-    			isScreenReaderRunning: true
-    		});
-    	}
+        // console.log(this.src + ' has loaded');
+        if (mobileAccessibility.isChromeVoxActive()) {
+            cordova.fireWindowEvent("screenreaderstatuschanged", {
+                isScreenReaderRunning: true
+            });
+        }
     };
-    
-    script.src = (versionsplit[0] > 4 || versionsplit[1] > 3)  
-    	? "plugins/com.phonegap.plugin.mobile-accessibility/android/chromeandroidvox.js" 
-    	: "plugins/com.phonegap.plugin.mobile-accessibility/android/AndroidVox_v1.js";
+
+    script.src = (versionsplit[0] > 4 || versionsplit[1] > 3)
+        ? "plugins/com.phonegap.plugin.mobile-accessibility/android/chromeandroidvox.js"
+        : "plugins/com.phonegap.plugin.mobile-accessibility/android/AndroidVox_v1.js";
     document.getElementsByTagName('head')[0].appendChild(script);
     mobileAccessibility.scriptInjected = true;
 };
@@ -193,49 +206,57 @@ MobileAccessibility.prototype.isTouchExplorationEnabled = function(callback) {
     exec(callback, null, "MobileAccessibility", "isTouchExplorationEnabled", []);
 };
 
+/**
+ * Asynchronous call to native MobileAccessibility to return the current text zoom percent value for the WebView.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
 MobileAccessibility.prototype.getTextZoom = function(callback) {
-	exec(callback, null, "MobileAccessibility", "getTextZoom", []);
+    exec(callback, null, "MobileAccessibility", "getTextZoom", []);
 };
 
+/**
+ * Asynchronous call to native MobileAccessibility to set the current text zoom percent value for the WebView.
+ * @param {Number} textZoom A percentage value by which text in the WebView should be scaled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
 MobileAccessibility.prototype.setTextZoom = function(textZoom, callback) {
-	exec(callback, null, "MobileAccessibility", "setTextZoom", [textZoom]);
+    exec(callback, null, "MobileAccessibility", "setTextZoom", [textZoom]);
 };
 
-MobileAccessibility.prototype.updateTextZoom = function() {
-	exec(null, null, "MobileAccessibility", "updateTextZoom", []);
+/**
+ * Asynchronous call to native MobileAccessibility to retrieve the user's preferred text zoom from system settings and apply it to the application WebView.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.updateTextZoom = function(callback) {
+    exec(callback, null, "MobileAccessibility", "updateTextZoom", []);
 };
 
 MobileAccessibility.prototype.usePreferredTextZoom = function(bool) {
-	var currentValue = window.localStorage.getItem("MobileAccessibility.usePreferredTextZoom") === "true";
-	
-	if (arguments.length === 0) {
-		return currentValue;
-	}
-	
-	if (currentValue != bool) {
-		window.localStorage.setItem("MobileAccessibility.usePreferredTextZoom", bool);
-	}
-	
-	document.removeEventListener("resume", mobileAccessibility.updateTextZoom);
-	
-	if (bool) {
-		// console.log("We should update the text zoom at this point: " + bool)
-		document.addEventListener("resume", mobileAccessibility.updateTextZoom, false);
-		mobileAccessibility.updateTextZoom();
-	} else {
-		mobileAccessibility.setTextZoom(100);
-	}
-	
-	return Boolean(bool);
+    var currentValue = window.localStorage.getItem("MobileAccessibility.usePreferredTextZoom") === "true";
+
+    if (arguments.length === 0) {
+        return currentValue;
+    }
+
+    if (currentValue != bool) {
+        window.localStorage.setItem("MobileAccessibility.usePreferredTextZoom", bool);
+    }
+
+    document.removeEventListener("resume", mobileAccessibility.updateTextZoom);
+
+    if (bool) {
+        // console.log("We should update the text zoom at this point: " + bool)
+        document.addEventListener("resume", mobileAccessibility.updateTextZoom, false);
+        mobileAccessibility.updateTextZoom();
+    } else {
+        mobileAccessibility.setTextZoom(100);
+    }
+
+    return Boolean(bool);
 };
 
-MobileAccessibility.prototype.MobileAccessibilityNotifications = {
-    SCREEN_CHANGED : 1000,
-    LAYOUT_CHANGED : 1001,
-    ANNOUNCEMENT : 1008,
-    PAGE_SCROLLED : 1009
-}
-               
+MobileAccessibility.prototype.MobileAccessibilityNotifications = MobileAccessibilityNotifications;
+
 /**
  * Posts a notification with a string for a screen reader to announce, if it is running.
  * @param {uint} mobileAccessibilityNotification A numeric constant for the type of notification to send. Constants are defined in MobileAccessibility.MobileAccessibilityNotifications.
@@ -253,22 +274,22 @@ MobileAccessibility.prototype.postNotification = function(mobileAccessibilityNot
  * @param {Object} [properties] Speech properties to use for this utterance.
  */
 MobileAccessibility.prototype.speak = function(string, queueMode, properties) {
-	if (this.isChromeVoxActive()) {
-		cvox.ChromeVox.tts.speak(string, queueMode, properties);
-	} else {
-		exec(null, null, "MobileAccessibility", "postNotification", [mobileAccessibility.MobileAccessibilityNotifications.ANNOUNCEMENT, string]);
-	}
+    if (this.isChromeVoxActive()) {
+        cvox.ChromeVox.tts.speak(string, queueMode, properties);
+    } else {
+        exec(null, null, "MobileAccessibility", "postNotification", [MobileAccessibilityNotifications.ANNOUNCEMENT, string]);
+    }
 }
 
 /**
  * Stops speech.
  */
 MobileAccessibility.prototype.stop = function() {
-	if (this.isChromeVoxActive()) {
-		cvox.ChromeVox.tts.stop();
-	} else {
-		exec(null, null, "MobileAccessibility", "postNotification", [mobileAccessibility.MobileAccessibilityNotifications.ANNOUNCEMENT]);
-	}
+    if (this.isChromeVoxActive()) {
+        cvox.ChromeVox.tts.stop();
+    } else {
+        exec(null, null, "MobileAccessibility", "postNotification", [MobileAccessibilityNotifications.ANNOUNCEMENT]);
+    }
 }
 
 /**
@@ -284,30 +305,30 @@ MobileAccessibility.prototype.stop = function() {
  */
 MobileAccessibility.prototype._status = function(info) {
     if (info) {
-    	mobileAccessibility.activateOrDeactivateChromeVox(info.isScreenReaderRunning);
-    	if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {	
+        mobileAccessibility.activateOrDeactivateChromeVox(info.isScreenReaderRunning);
+        if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {
             mobileAccessibility._isScreenReaderRunning = info.isScreenReaderRunning;
-        	cordova.fireWindowEvent("screenreaderstatuschanged", info);
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isClosedCaptioningEnabled !== info.isClosedCaptioningEnabled) {
             mobileAccessibility._isClosedCaptioningEnabled = info.isClosedCaptioningEnabled;
-            cordova.fireWindowEvent("closedcaptioningstatuschanged", info);
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isGuidedAccessEnabled !== info.isGuidedAccessEnabled) {
             mobileAccessibility._isGuidedAccessEnabled = info.isGuidedAccessEnabled;
-            cordova.fireWindowEvent("guidedaccessstatuschanged", info);
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isInvertColorsEnabled !== info.isInvertColorsEnabled) {
             mobileAccessibility._isInvertColorsEnabled = info.isInvertColorsEnabled;
-            cordova.fireWindowEvent("invertcolorsstatuschanged", info);
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isMonoAudioEnabled !== info.isMonoAudioEnabled) {
            mobileAccessibility._isMonoAudioEnabled = info.isMonoAudioEnabled;
-           cordova.fireWindowEvent("monoaudiostatuschanged", info);
+           cordova.fireWindowEvent(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isTouchExplorationEnabled !== info.isTouchExplorationEnabled) {
             mobileAccessibility._isTouchExplorationEnabled = info.isTouchExplorationEnabled;
-            cordova.fireWindowEvent("touchexplorationstatechanged", info);
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED, info);
          }
     }
 };
@@ -320,5 +341,5 @@ MobileAccessibility.prototype._error = function(e) {
 };
 
 var mobileAccessibility = new MobileAccessibility();
-               
+
 module.exports = mobileAccessibility;
