@@ -1,0 +1,35 @@
+PhoneGap Mobile Accessibility plugin
+
+com.phonegap.plugin.mobile-accessibility
+
+Copyright 2014 Adobe Systems Incorporated
+
+This software is licensed under the Apache License, Version 2.0 (see LICENSE file).
+
+This software bundles the following third party software that may have
+licenses differing from that of the software itself. You can find the
+libraries and their respective licenses below.
+
+Third Party Software Notices:
+=============================
+
+ - AndroidVox_v1.js - ./www/android/AndroidVox_v1.js
+    from https://ssl.gstatic.com/accessibility/javascript/android/AndroidVox_v1.js
+ - chromeandroidvox.js - ./www/android/chromeandroidvox.js
+    from https://ssl.gstatic.com/accessibility/javascript/android/chromeandroidvox.js
+
+source url: https://code.google.com/p/google-axs-chrome/source/browse/#svn%2Ftrunk%2Fchromevox
+
+Copyright 2013 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
