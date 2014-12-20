@@ -288,7 +288,7 @@ MobileAccessibility.prototype.stop = function() {
     if (this.isChromeVoxActive()) {
         cvox.ChromeVox.tts.stop();
     } else {
-        exec(null, null, "MobileAccessibility", "postNotification", [MobileAccessibilityNotifications.ANNOUNCEMENT]);
+        exec(null, null, "MobileAccessibility", "postNotification", [MobileAccessibilityNotifications.ANNOUNCEMENT, "\u200b"]);
     }
 }
 
