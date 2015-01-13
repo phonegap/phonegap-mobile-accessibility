@@ -35,6 +35,9 @@ var MobileAccessibility = function() {
     this._isMonoAudioEnabled = false;
     this._isTouchExplorationEnabled = false;
     this._usePreferredTextZoom = false;
+    this._isHighContrastEnabled = false;
+    this._highContrastScheme = undefined;
+
     // Create new event handlers on the window (returns a channel instance)
     this.channels = {
         screenreaderstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED),
@@ -42,7 +45,8 @@ var MobileAccessibility = function() {
         guidedaccessstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED),
         invertcolorsstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED),
         monoaudiostatuschanged          : cordova.addWindowEventHandler(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED),
-        touchexplorationstatechanged    : cordova.addWindowEventHandler(MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED)
+        touchexplorationstatechanged    : cordova.addWindowEventHandler(MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED),
+        highcontrastchanged             : cordova.addWindowEventHandler(MobileAccessibilityNotifications.HIGH_CONTRAST_CHANGED)
     };
     for (var key in this.channels) {
         this.channels[key].onHasSubscribersChange = MobileAccessibility.onHasSubscribersChange;
@@ -59,7 +63,8 @@ function handlers() {
            mobileAccessibility.channels.invertcolorsstatuschanged.numHandlers +
            mobileAccessibility.channels.monoaudiostatuschanged.numHandlers +
            mobileAccessibility.channels.guidedaccessstatuschanged.numHandlers +
-           mobileAccessibility.channels.touchexplorationstatechanged.numHandlers;
+           mobileAccessibility.channels.touchexplorationstatechanged.numHandlers +
+           mobileAccessibility.channels.highcontrastchanged.numHandlers;
 };
 
 /**
@@ -207,6 +212,14 @@ MobileAccessibility.prototype.isTouchExplorationEnabled = function(callback) {
 };
 
 /**
+ * Asynchronous call to native MobileAccessibility to determine if High Contrast is enabled on Windows.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isHighContrastEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isHighContrastEnabled", []);
+};
+
+/**
  * Asynchronous call to native MobileAccessibility to return the current text zoom percent value for the WebView.
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
@@ -293,7 +306,7 @@ MobileAccessibility.prototype.stop = function() {
 }
 
 /**
- * Callback from native MobileAccessibility returning an which describes the status of MobileAccessibility features.
+ * Callback from native MobileAccessibility returning an object which describes the status of MobileAccessibility features.
  *
  * @param {Object} info
  * @config {Boolean} [isScreenReaderRunning] Boolean to indicate screen reader status.
@@ -329,7 +342,12 @@ MobileAccessibility.prototype._status = function(info) {
         if (mobileAccessibility._isTouchExplorationEnabled !== info.isTouchExplorationEnabled) {
             mobileAccessibility._isTouchExplorationEnabled = info.isTouchExplorationEnabled;
             cordova.fireWindowEvent(MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED, info);
-         }
+        }
+        if (mobileAccessibility._isHighContrastEnabled !== info.isHighContrastEnabled) {
+            mobileAccessibility._isHighContrastEnabled = info.isHighContrastEnabled;
+            mobileAccessibility._highContrastScheme = info.highContrastScheme;
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.HIGH_CONTRAST_CHANGED, info);
+        }
     }
 };
 

@@ -35,5 +35,8 @@ module.exports = {
     SCREEN_CHANGED : 1000,
     LAYOUT_CHANGED : 1001,
     ANNOUNCEMENT : 1008,
-    PAGE_SCROLLED : 1009
+    PAGE_SCROLLED : 1009,
+
+    /* Windows specific high contrast event  */
+    HIGH_CONTRAST_CHANGED : "highcontrastchanged"
 };
