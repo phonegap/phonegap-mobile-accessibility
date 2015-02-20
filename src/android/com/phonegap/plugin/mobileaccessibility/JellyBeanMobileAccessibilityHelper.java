@@ -40,6 +40,7 @@ public class JellyBeanMobileAccessibilityHelper extends
     @Override
     public void announceForAccessibility(CharSequence text) {
         if (mAccessibilityManager.isEnabled() && mParent != null) {
+            mAccessibilityManager.interrupt();
             AccessibilityEvent event = AccessibilityEvent.obtain(
                     AccessibilityEvent.TYPE_ANNOUNCEMENT);
             mWebView.onInitializeAccessibilityEvent(event);
