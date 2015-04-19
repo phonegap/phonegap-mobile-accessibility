@@ -22,9 +22,9 @@
 var argscheck = require('cordova/argscheck'),
     utils = require('cordova/utils'),
     exec = require('cordova/exec'),
-    device = require('org.apache.cordova.device.device'),
-    network = require('org.apache.cordova.network-information.network'),
-    connection = require('org.apache.cordova.network-information.Connection'),
+    device = require('cordova-plugin-device.device'),
+    network = require('cordova-plugin-network-information.network'),
+    connection = require('cordova-plugin-network-information.Connection'),
     MobileAccessibilityNotifications = require('com.phonegap.plugin.mobile-accessibility.MobileAccessibilityNotifications');
 
 var MobileAccessibility = function() {
