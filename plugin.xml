@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.phonegap.plugin.mobile-accessibility"
     version="0.1.2">
@@ -21,8 +20,8 @@
         <clobbers target="MobileAccessibilityNotifications" />
     </js-module>
 
-   <dependency id="org.apache.cordova.device" url="https://github.com/apache/cordova-plugin-device.git" />
-   <dependency id="org.apache.cordova.network-information" url="https://github.com/apache/cordova-plugin-network-information.git" />
+   <dependency id="cordova-plugin-device" url="https://github.com/apache/cordova-plugin-device.git" />
+   <dependency id="cordova-plugin-network-information" url="https://github.com/apache/cordova-plugin-network-information.git" />
 
     <!-- ios -->
     <platform name="ios">
