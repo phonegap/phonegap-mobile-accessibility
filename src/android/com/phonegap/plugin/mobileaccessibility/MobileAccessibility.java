@@ -31,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Build;
+import android.webkit.WebView;
 
 /**
  * This class provides information on the status of native accessibility services to JavaScript.
@@ -132,7 +133,7 @@ public class MobileAccessibility extends CordovaPlugin {
             stop();
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                        webView.reload();
+                        ((WebView) webView).reload();
                     }
                 });
         }
