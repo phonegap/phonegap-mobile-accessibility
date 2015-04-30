@@ -26,6 +26,7 @@ import com.phonegap.plugin.mobileaccessibility.MobileAccessibility;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
+import android.webkit.WebView;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class JellyBeanMobileAccessibilityHelper extends
@@ -34,7 +35,7 @@ public class JellyBeanMobileAccessibilityHelper extends
     @Override
     public void initialize(MobileAccessibility mobileAccessibility) {
         super.initialize(mobileAccessibility);
-        mParent = mobileAccessibility.webView.getParentForAccessibility();
+        mParent = ((WebView) mobileAccessibility.webView).getParentForAccessibility();
     }
 
     @Override

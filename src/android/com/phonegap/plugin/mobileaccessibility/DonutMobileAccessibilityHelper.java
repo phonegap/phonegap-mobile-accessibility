@@ -38,7 +38,7 @@ public class DonutMobileAccessibilityHelper extends
     @Override
     public void initialize(MobileAccessibility mobileAccessibility) {
         mMobileAccessibility = mobileAccessibility;
-        mWebView = mobileAccessibility.webView;
+        mWebView = (WebView) mobileAccessibility.webView;
         mAccessibilityManager = (AccessibilityManager) mMobileAccessibility.cordova.getActivity().getSystemService(Context.ACCESSIBILITY_SERVICE);
     }
 
