@@ -133,9 +133,15 @@ public class MobileAccessibility extends CordovaPlugin {
             stop();
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                        ((WebView) webView).reload();
-                    }
-                });
+                  WebView view;
+                  try {
+                    view = (WebView) webView;
+                  } catch(ClassCastException ce) {  // cordova-android 4.0+
+                    view = (WebView) webView.getView();
+                  }
+                  view.reload();
+                }
+            });
         }
     }
 

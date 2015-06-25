@@ -38,7 +38,12 @@ public class DonutMobileAccessibilityHelper extends
     @Override
     public void initialize(MobileAccessibility mobileAccessibility) {
         mMobileAccessibility = mobileAccessibility;
-        mWebView = (WebView) mobileAccessibility.webView;
+        try {
+          mWebView = (WebView) mobileAccessibility.webView;
+        } catch (ClassCastException ce) {   // cordova-android 4.0+
+          mWebView = (WebView) mobileAccessibility.webView.getView();
+        }
+
         mAccessibilityManager = (AccessibilityManager) mMobileAccessibility.cordova.getActivity().getSystemService(Context.ACCESSIBILITY_SERVICE);
     }
 
