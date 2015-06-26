@@ -34,8 +34,14 @@ public class JellyBeanMobileAccessibilityHelper extends
 
     @Override
     public void initialize(MobileAccessibility mobileAccessibility) {
+        WebView view;
         super.initialize(mobileAccessibility);
-        mParent = ((WebView) mobileAccessibility.webView).getParentForAccessibility();
+        try {
+            view = (WebView) mobileAccessibility.webView;
+        } catch (ClassCastException ce) {   // cordova android 4.0+
+            view = (WebView) mobileAccessibility.webView.getView();
+        }
+        mParent = view.getParentForAccessibility();
     }
 
     @Override
