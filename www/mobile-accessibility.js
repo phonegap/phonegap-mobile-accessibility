@@ -25,7 +25,7 @@ var argscheck = require('cordova/argscheck'),
     device = require('cordova-plugin-device.device'),
     network = require('cordova-plugin-network-information.network'),
     connection = require('cordova-plugin-network-information.Connection'),
-    MobileAccessibilityNotifications = require('com.phonegap.plugin.mobile-accessibility.MobileAccessibilityNotifications');
+    MobileAccessibilityNotifications = require('phonegap-plugin-mobile-accessibility.MobileAccessibilityNotifications');
 
 var MobileAccessibility = function() {
     this._isScreenReaderRunning = false;
