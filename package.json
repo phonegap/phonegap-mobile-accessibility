@@ -1,7 +1,15 @@
 {
   "name": "phonegap-plugin-mobile-accessibility",
-  "version": "0.1.4-dev",
   "description": "PhoneGap Mobile Accessibility Plugin",
+  "version": "1.0.0",
+  "homepage": "http://github.com/phonegap/phonegap-mobile-accessibility#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phonegap/phonegap-mobile-accessibility.git"
+  },
+  "bugs": {
+    "url": "https://github.com/phonegap/phonegap-mobile-accessibility/issues"
+  },
   "cordova": {
     "id": "phonegap-plugin-mobile-accessibility",
     "platforms": [
@@ -9,10 +17,6 @@
       "android",
       "windows"
     ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/phonegap/phonegap-mobile-accessibility.git"
   },
   "keywords": [
     "phonegap",
@@ -29,9 +33,5 @@
     }
   ],
   "author": "Adobe PhoneGap Team",
-  "license": "Apache 2.0",
-  "bugs": {
-    "url": "https://github.com/phonegap/phonegap-mobile-accessibility/issues"
-  },
-  "homepage": "https://github.com/phonegap/phonegap-mobile-accessibility#readme"
+  "license": "Apache 2.0"
 }
