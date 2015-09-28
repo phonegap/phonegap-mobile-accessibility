@@ -28,6 +28,10 @@ import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
 import android.webkit.WebView;
 
+import java.lang.IllegalAccessException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class JellyBeanMobileAccessibilityHelper extends
         IceCreamSandwichMobileAccessibilityHelper {
@@ -36,12 +40,24 @@ public class JellyBeanMobileAccessibilityHelper extends
     public void initialize(MobileAccessibility mobileAccessibility) {
         WebView view;
         super.initialize(mobileAccessibility);
+
         try {
             view = (WebView) mobileAccessibility.webView;
-        } catch (ClassCastException ce) {   // cordova android 4.0+
-            view = (WebView) mobileAccessibility.webView.getView();
+            mParent = view.getParentForAccessibility();
+        } catch(ClassCastException ce) {  // cordova-android 4.0+
+            try {
+                Method getView = mobileAccessibility.webView.getClass().getMethod("getView");
+                view = (WebView) getView.invoke(mobileAccessibility.webView);
+                mParent = view.getParentForAccessibility();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
-        mParent = view.getParentForAccessibility();
+
     }
 
     @Override

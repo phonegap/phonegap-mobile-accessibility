@@ -29,6 +29,10 @@ import android.view.accessibility.AccessibilityManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import java.lang.IllegalAccessException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 @TargetApi(Build.VERSION_CODES.DONUT)
 public class DonutMobileAccessibilityHelper extends
         AbstractMobileAccessibilityHelper {
@@ -38,10 +42,20 @@ public class DonutMobileAccessibilityHelper extends
     @Override
     public void initialize(MobileAccessibility mobileAccessibility) {
         mMobileAccessibility = mobileAccessibility;
+
         try {
-          mWebView = (WebView) mobileAccessibility.webView;
-        } catch (ClassCastException ce) {   // cordova-android 4.0+
-          mWebView = (WebView) mobileAccessibility.webView.getView();
+            mWebView = (WebView) mobileAccessibility.webView;
+        } catch(ClassCastException ce) {  // cordova-android 4.0+
+            try {
+                Method getView = mobileAccessibility.webView.getClass().getMethod("getView");
+                mWebView = (WebView) getView.invoke(mobileAccessibility.webView);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
 
         mAccessibilityManager = (AccessibilityManager) mMobileAccessibility.cordova.getActivity().getSystemService(Context.ACCESSIBILITY_SERVICE);

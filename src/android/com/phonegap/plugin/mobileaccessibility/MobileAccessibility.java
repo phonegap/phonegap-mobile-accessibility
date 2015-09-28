@@ -33,6 +33,10 @@ import org.json.JSONObject;
 import android.os.Build;
 import android.webkit.WebView;
 
+import java.lang.IllegalAccessException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 /**
  * This class provides information on the status of native accessibility services to JavaScript.
  */
@@ -133,13 +137,23 @@ public class MobileAccessibility extends CordovaPlugin {
             stop();
             cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                  WebView view;
-                  try {
-                    view = (WebView) webView;
-                  } catch(ClassCastException ce) {  // cordova-android 4.0+
-                    view = (WebView) webView.getView();
-                  }
-                  view.reload();
+                    WebView view;
+                    try {
+                        view = (WebView) webView;
+                        view.reload();
+                    } catch(ClassCastException ce) {  // cordova-android 4.0+
+                        try {   // cordova-android 4.0+
+                            Method getView = webView.getClass().getMethod("getView");
+                            view = (WebView) getView.invoke(webView);
+                            view.reload();
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             });
         }
