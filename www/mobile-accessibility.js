@@ -255,11 +255,19 @@ MobileAccessibility.prototype.usePreferredTextZoom = function(bool) {
         window.localStorage.setItem("MobileAccessibility.usePreferredTextZoom", bool);
     }
 
-    document.removeEventListener("resume", mobileAccessibility.updateTextZoom);
+    var callback = function(){ 
+        // Wrapping updateTextZoom call in a function to stop
+        // the event parameter propagation. This fixes an error
+        // on resume where cordova tried to call apply() on the
+        // event, expecting a function.
+        mobileAccessibility.updateTextZoom(); 
+    };
+
+    document.removeEventListener("resume", callback);
 
     if (bool) {
         // console.log("We should update the text zoom at this point: " + bool)
-        document.addEventListener("resume", mobileAccessibility.updateTextZoom, false);
+        document.addEventListener("resume", callback, false);
         mobileAccessibility.updateTextZoom();
     } else {
         mobileAccessibility.setTextZoom(100);
