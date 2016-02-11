@@ -26,6 +26,7 @@ import android.content.Context;
 import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -36,19 +37,20 @@ import java.lang.reflect.Method;
 @TargetApi(Build.VERSION_CODES.DONUT)
 public class DonutMobileAccessibilityHelper extends
         AbstractMobileAccessibilityHelper {
-    protected AccessibilityManager mAccessibilityManager;
-    protected WebView mWebView;
+    AccessibilityManager mAccessibilityManager;
+    View mView;
 
     @Override
     public void initialize(MobileAccessibility mobileAccessibility) {
         mMobileAccessibility = mobileAccessibility;
-
+        WebView view;
         try {
-            mWebView = (WebView) mobileAccessibility.webView;
+            view = (WebView) mobileAccessibility.webView;
+            mView = view;
         } catch(ClassCastException ce) {  // cordova-android 4.0+
             try {
                 Method getView = mobileAccessibility.webView.getClass().getMethod("getView");
-                mWebView = (WebView) getView.invoke(mobileAccessibility.webView);
+                mView = (View) getView.invoke(mobileAccessibility.webView);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
@@ -108,9 +110,9 @@ public class DonutMobileAccessibilityHelper extends
         final int eventType = AccessibilityEvent.TYPE_VIEW_FOCUSED;
         final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
         event.getText().add(text);
-        event.setEnabled(mWebView.isEnabled());
-        event.setClassName(mWebView.getClass().getName());
-        event.setPackageName(mWebView.getContext().getPackageName());
+        event.setEnabled(mView.isEnabled());
+        event.setClassName(mView.getClass().getName());
+        event.setPackageName(mView.getContext().getPackageName());
         event.setContentDescription(null);
 
         mAccessibilityManager.sendAccessibilityEvent(event);
@@ -120,7 +122,23 @@ public class DonutMobileAccessibilityHelper extends
     @Override
     public double getTextZoom() {
         double zoom = 100;
-        WebSettings.TextSize wTextSize = mWebView.getSettings().getTextSize();
+        WebSettings.TextSize wTextSize = WebSettings.TextSize.NORMAL;
+
+        try {
+            Method getSettings = mView.getClass().getMethod("getSettings");
+            Object wSettings = getSettings.invoke(mView);
+            Method getTextSize = wSettings.getClass().getMethod("getTextSize");
+            wTextSize = (WebSettings.TextSize) getTextSize.invoke(wSettings);
+        } catch(ClassCastException ce) {
+            ce.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         switch (wTextSize) {
         case LARGEST:
             zoom = 200;
@@ -128,39 +146,42 @@ public class DonutMobileAccessibilityHelper extends
         case LARGER:
             zoom = 150;
             break;
-        case NORMAL:
-            zoom = 100;
-            break;
         case SMALLER:
             zoom = 75;
             break;
         case SMALLEST:
             zoom = 50;
             break;
-        default:
-            zoom = 100;
-            break;
         }
+
         return zoom;
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void setTextZoom(double textZoom) {
-        final double zoom = textZoom;
-        WebSettings.TextSize wTextSize = WebSettings.TextSize.NORMAL;
-        if (zoom > 115) {
+        WebSettings.TextSize wTextSize = WebSettings.TextSize.SMALLEST;
+        if (textZoom > 115) {
             wTextSize = WebSettings.TextSize.LARGEST;
-        } else if (zoom > 100) {
+        } else if (textZoom > 100) {
             wTextSize = WebSettings.TextSize.LARGER;
-        } else if (zoom == 100) {
+        } else if (textZoom == 100) {
             wTextSize = WebSettings.TextSize.NORMAL;
-        } else if (zoom > 50) {
+        } else if (textZoom > 50) {
             wTextSize = WebSettings.TextSize.SMALLER;
-        } else {
-            wTextSize = WebSettings.TextSize.SMALLEST;
         }
         //Log.i("MobileAccessibility", "fontScale = " + zoom + ", WebSettings.TextSize = " + wTextSize.toString());
-        mWebView.getSettings().setTextSize(wTextSize);
+        try {
+            Method getSettings = mView.getClass().getMethod("getSettings");
+            Object wSettings = getSettings.invoke(mView);
+            Method setTextSize = wSettings.getClass().getMethod("setTextSize", WebSettings.TextSize.class);
+            setTextSize.invoke(wSettings, wTextSize);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

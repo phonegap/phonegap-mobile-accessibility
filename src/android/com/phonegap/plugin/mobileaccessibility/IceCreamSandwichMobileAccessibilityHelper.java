@@ -26,10 +26,14 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.accessibility.AccessibilityManager.AccessibilityStateChangeListener;
 
+import java.lang.IllegalAccessException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class IceCreamSandwichMobileAccessibilityHelper extends
         DonutMobileAccessibilityHelper {
-    protected AccessibilityStateChangeListener mAccessibilityStateChangeListener;
+    private AccessibilityStateChangeListener mAccessibilityStateChangeListener;
 
     @Override
     public boolean isScreenReaderRunning() {
@@ -52,17 +56,44 @@ public class IceCreamSandwichMobileAccessibilityHelper extends
 
     @Override
     public double getTextZoom() {
-        return mWebView.getSettings().getTextZoom();
+        double zoom = 100;
+        try {
+            Method getSettings = mView.getClass().getMethod("getSettings");
+            Object wSettings = getSettings.invoke(mView);
+            Method getTextZoom = wSettings.getClass().getMethod("getTextZoom");
+            zoom = Double.valueOf(getTextZoom.invoke(wSettings).toString());
+        } catch (ClassCastException ce) {
+            ce.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return zoom;
     }
 
     @Override
     public void setTextZoom(double textZoom) {
-        final double zoom = textZoom;
         //Log.i("MobileAccessibility", "setTextZoom(" + zoom + ")");
-        mWebView.getSettings().setTextZoom((int) zoom);
+        try {
+            Method getSettings = mView.getClass().getMethod("getSettings");
+            Object wSettings = getSettings.invoke(mView);
+            Method setTextZoom = wSettings.getClass().getMethod("setTextZoom", Integer.TYPE);
+            setTextZoom.invoke(wSettings, (int) textZoom);
+        } catch (ClassCastException ce) {
+            ce.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
-    protected class InternalAccessibilityStateChangeListener
+    private class InternalAccessibilityStateChangeListener
         implements AccessibilityStateChangeListener {
 
         @Override

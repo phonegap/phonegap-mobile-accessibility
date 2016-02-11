@@ -31,9 +31,9 @@ import android.view.accessibility.CaptioningManager.CaptioningChangeListener;
 @TargetApi(19)
 public class KitKatMobileAccessibilityHelper extends
         JellyBeanMobileAccessibilityHelper {
-    protected CaptioningManager mCaptioningManager;
-    protected CaptioningChangeListener mCaptioningChangeListener;
-    protected TouchExplorationStateChangeListener mTouchExplorationStateChangeListener;
+    private CaptioningManager mCaptioningManager;
+    private CaptioningChangeListener mCaptioningChangeListener;
+    private TouchExplorationStateChangeListener mTouchExplorationStateChangeListener;
 
     @Override
     public void initialize(MobileAccessibility mobileAccessibility) {
@@ -61,7 +61,6 @@ public class KitKatMobileAccessibilityHelper extends
         super.addStateChangeListeners();
         if (mCaptioningChangeListener == null) {
             mCaptioningChangeListener = new CaptioningChangeListener() {
-                /** @hide */
                 @Override
                 public void onEnabledChanged(boolean enabled) {
                     onCaptioningEnabledChanged(enabled);
@@ -89,7 +88,7 @@ public class KitKatMobileAccessibilityHelper extends
         }
     }
 
-    protected class InternalTouchExplorationStateChangeListener
+    private class InternalTouchExplorationStateChangeListener
         implements TouchExplorationStateChangeListener {
 
         @Override

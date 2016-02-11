@@ -26,11 +26,6 @@ import com.phonegap.plugin.mobileaccessibility.MobileAccessibility;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
-import android.webkit.WebView;
-
-import java.lang.IllegalAccessException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class JellyBeanMobileAccessibilityHelper extends
@@ -38,26 +33,8 @@ public class JellyBeanMobileAccessibilityHelper extends
 
     @Override
     public void initialize(MobileAccessibility mobileAccessibility) {
-        WebView view;
         super.initialize(mobileAccessibility);
-
-        try {
-            view = (WebView) mobileAccessibility.webView;
-            mParent = view.getParentForAccessibility();
-        } catch(ClassCastException ce) {  // cordova-android 4.0+
-            try {
-                Method getView = mobileAccessibility.webView.getClass().getMethod("getView");
-                view = (WebView) getView.invoke(mobileAccessibility.webView);
-                mParent = view.getParentForAccessibility();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
+        mParent = mView.getParentForAccessibility();
     }
 
     @Override
@@ -66,10 +43,10 @@ public class JellyBeanMobileAccessibilityHelper extends
             mAccessibilityManager.interrupt();
             AccessibilityEvent event = AccessibilityEvent.obtain(
                     AccessibilityEvent.TYPE_ANNOUNCEMENT);
-            mWebView.onInitializeAccessibilityEvent(event);
+            mView.onInitializeAccessibilityEvent(event);
             event.getText().add(text);
             event.setContentDescription(null);
-            mParent.requestSendAccessibilityEvent(mWebView, event);
+            mParent.requestSendAccessibilityEvent(mView, event);
         }
     }
 }

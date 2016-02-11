@@ -41,13 +41,13 @@ import java.lang.reflect.Method;
  * This class provides information on the status of native accessibility services to JavaScript.
  */
 public class MobileAccessibility extends CordovaPlugin {
-    protected AbstractMobileAccessibilityHelper mMobileAccessibilityHelper;
-    protected CallbackContext mCallbackContext = null;
-    protected boolean mIsScreenReaderRunning = false;
-    protected boolean mClosedCaptioningEnabled = false;
-    protected boolean mTouchExplorationEnabled = false;
-    protected boolean mCachedIsScreenReaderRunning = false;
-    protected float mFontScale = 1;
+    private AbstractMobileAccessibilityHelper mMobileAccessibilityHelper;
+    private CallbackContext mCallbackContext = null;
+    private boolean mIsScreenReaderRunning = false;
+    private boolean mClosedCaptioningEnabled = false;
+    private boolean mTouchExplorationEnabled = false;
+    private boolean mCachedIsScreenReaderRunning = false;
+    private float mFontScale = 1;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -144,8 +144,8 @@ public class MobileAccessibility extends CordovaPlugin {
                     } catch(ClassCastException ce) {  // cordova-android 4.0+
                         try {   // cordova-android 4.0+
                             Method getView = webView.getClass().getMethod("getView");
-                            view = (WebView) getView.invoke(webView);
-                            view.reload();
+                            Method reload = getView.invoke(webView).getClass().getMethod("reload");
+                            reload.invoke(webView);
                         } catch (NoSuchMethodException e) {
                             e.printStackTrace();
                         } catch (InvocationTargetException e) {
@@ -166,14 +166,13 @@ public class MobileAccessibility extends CordovaPlugin {
         stop();
     }
 
-    protected boolean isScreenReaderRunning(final CallbackContext callbackContext) {
+    private void isScreenReaderRunning(final CallbackContext callbackContext) {
         mIsScreenReaderRunning = mMobileAccessibilityHelper.isScreenReaderRunning();
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                     callbackContext.success(mIsScreenReaderRunning ? 1 : 0);
                 }
             });
-        return mIsScreenReaderRunning;
     }
 
     protected boolean isScreenReaderRunning() {
@@ -181,14 +180,13 @@ public class MobileAccessibility extends CordovaPlugin {
         return mIsScreenReaderRunning;
     }
 
-    protected boolean isClosedCaptioningEnabled(final CallbackContext callbackContext) {
+    private void isClosedCaptioningEnabled(final CallbackContext callbackContext) {
         mClosedCaptioningEnabled = mMobileAccessibilityHelper.isClosedCaptioningEnabled();
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 callbackContext.success(mClosedCaptioningEnabled ? 1 : 0);
             }
         });
-        return mClosedCaptioningEnabled;
     }
 
     protected boolean isClosedCaptioningEnabled() {
@@ -196,14 +194,13 @@ public class MobileAccessibility extends CordovaPlugin {
         return mClosedCaptioningEnabled;
     }
 
-    protected boolean isTouchExplorationEnabled(final CallbackContext callbackContext) {
+    private void isTouchExplorationEnabled(final CallbackContext callbackContext) {
         mTouchExplorationEnabled= mMobileAccessibilityHelper.isTouchExplorationEnabled();
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 callbackContext.success(mTouchExplorationEnabled ? 1 : 0);
             }
         });
-        return mTouchExplorationEnabled;
     }
 
     protected boolean isTouchExplorationEnabled() {
@@ -211,7 +208,7 @@ public class MobileAccessibility extends CordovaPlugin {
         return mTouchExplorationEnabled;
     }
 
-    protected void announceForAccessibility(CharSequence text, final CallbackContext callbackContext) {
+    private void announceForAccessibility(CharSequence text, final CallbackContext callbackContext) {
         mMobileAccessibilityHelper.announceForAccessibility(text);
         if (callbackContext != null) {
             JSONObject info = new JSONObject();
@@ -252,7 +249,7 @@ public class MobileAccessibility extends CordovaPlugin {
             });
     }
 
-    public void getTextZoom(final CallbackContext callbackContext) {
+    private void getTextZoom(final CallbackContext callbackContext) {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 final double textZoom = mMobileAccessibilityHelper.getTextZoom();
@@ -263,13 +260,13 @@ public class MobileAccessibility extends CordovaPlugin {
         });
     }
 
-    public void setTextZoom(final double textZoom, final CallbackContext callbackContext) {
+    private void setTextZoom(final double textZoom, final CallbackContext callbackContext) {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 mMobileAccessibilityHelper.setTextZoom(textZoom);
                 if (callbackContext != null) {
                     callbackContext.success((int) mMobileAccessibilityHelper.getTextZoom());
-                };
+                }
             }
         });
     }
@@ -282,7 +279,7 @@ public class MobileAccessibility extends CordovaPlugin {
         });
     }
 
-    public void updateTextZoom(final CallbackContext callbackContext) {
+    private void updateTextZoom(final CallbackContext callbackContext) {
         float fontScale = cordova.getActivity().getResources().getConfiguration().fontScale;
         if (fontScale != mFontScale) {
             mFontScale = fontScale;
@@ -291,7 +288,7 @@ public class MobileAccessibility extends CordovaPlugin {
         setTextZoom(textZoom, callbackContext);
     }
 
-    protected void sendMobileAccessibilityStatusChangedCallback() {
+    private void sendMobileAccessibilityStatusChangedCallback() {
         if (this.mCallbackContext != null) {
             PluginResult result = new PluginResult(PluginResult.Status.OK, getMobileAccessibilityStatus());
             result.setKeepCallback(true);
@@ -300,7 +297,7 @@ public class MobileAccessibility extends CordovaPlugin {
     }
 
     /* Get the current mobile accessibility status. */
-    protected JSONObject getMobileAccessibilityStatus() {
+    private JSONObject getMobileAccessibilityStatus() {
         JSONObject status = new JSONObject();
         try {
             status.put("isScreenReaderRunning", mIsScreenReaderRunning);
@@ -315,14 +312,14 @@ public class MobileAccessibility extends CordovaPlugin {
         return status;
     }
 
-    protected void start(CallbackContext callbackContext) {
+    private void start(CallbackContext callbackContext) {
         //Log.i("MobileAccessibility", "MobileAccessibility.start");
         mCallbackContext = callbackContext;
         mMobileAccessibilityHelper.addStateChangeListeners();
         sendMobileAccessibilityStatusChangedCallback();
     }
 
-    protected void stop() {
+    private void stop() {
         //Log.i("MobileAccessibility", "MobileAccessibility.stop");
         if (mCallbackContext != null) {
             sendMobileAccessibilityStatusChangedCallback();

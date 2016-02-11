@@ -23,9 +23,9 @@ package com.phonegap.plugin.mobileaccessibility;
 
 import android.view.ViewParent;
 
-public abstract class AbstractMobileAccessibilityHelper {
-    protected MobileAccessibility mMobileAccessibility;
-    protected ViewParent mParent;
+abstract class AbstractMobileAccessibilityHelper {
+    MobileAccessibility mMobileAccessibility;
+    ViewParent mParent;
     public abstract void initialize(MobileAccessibility mobileAccessibility);
     public abstract boolean isClosedCaptioningEnabled();
     public abstract boolean isScreenReaderRunning();
