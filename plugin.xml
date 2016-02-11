@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="phonegap-plugin-mobile-accessibility"
-    version="1.0.3-dev">
+    version="1.0.3">
     <name>Mobile Accessibility</name>
     <description>PhoneGap Mobile Accessibility Plugin</description>
     <license>Apache 2.0</license>
