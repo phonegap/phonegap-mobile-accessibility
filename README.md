@@ -31,6 +31,7 @@ The `MobileAccessibility` object, exposed by `window.MobileAccessibility`, provi
 - MobileAccessibility.isGuidedAccessEnabled
 - MobileAccessibility.isInvertColorsEnabled
 - MobileAccessibility.isMonoAudioEnabled
+- MobileAccessibility.isReduceMotionEnabled
 - MobileAccessibility.isTouchExplorationEnabled
 - MobileAccessibility.getTextZoom
 - MobileAccessibility.setTextZoom
@@ -532,6 +533,7 @@ The following event constants are for `window` events, to which an application c
 - MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED
 - MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED
 - MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED
+- MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED
 - MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED
 
 ----------------------------------------------------------------------------------------------
@@ -652,6 +654,30 @@ If a screen reader is active, `info.isMonoAudioEnabled` will equal `true`.
 
     // Register the callback method to handle the event
     window.addEventListener(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED, onMonoAudioStatusChanged, false);
+```
+
+----------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED (reducemotionstatuschanged)
+
+The event fires when Reduce Motion has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If a screen reader is active, `info.isReduceMotionEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onReduceMotionStatusChanged(info) {
+        if (info && typeof info.isReduceMotionEnabled !== "undefined") {
+            if (info.isReduceMotionEnabled) {
+                console.log("Reduce Motion: ON");
+                // Do something to improve the behavior of the application while Reduce Motion is enabled.
+            } else {
+                console.log("Reduce Motion: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED, onMReduceMotionStatusChanged, false);
 ```
 
 ------------------------------------------------------------------------------------------------------
