@@ -284,6 +284,35 @@ Makes an asynchronous call to native `MobileAccessibility` to determine if mono 
 
 - iOS
 
+----------------------------------------------------
+#### MobileAccessibility.isReduceMotionEnabled(callback)
+
+
+An iOS-specific proxy for the `MobileAccessibility.UIAccessibilityIsReduceMotionEnabled` method.
+
+##### Parameters
+
+- __callback__ (Function) A callback method to receive the boolean result asynchronously from the native `MobileAccessibility` plugin.
+
+##### Usage
+
+```javascript
+    function isReduceMotionEnabledCallback(boolean) {
+        if (boolean) {
+            console.log("Reduce Motion: ON");
+            // Do something to improve the behavior of the application when reduce motion is enabled.
+        } else {
+            console.log("Reduce Motion: OFF");
+        }
+    }
+
+    MobileAccessibility.isReduceMotionEnabled(isReduceMotionEnabledCallback);
+```
+
+##### Supported Platforms
+
+- iOS
+
 ------------------------------------------------------------
 #### MobileAccessibility.isTouchExplorationEnabled(callback)
 

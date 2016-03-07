@@ -39,6 +39,7 @@
 @synthesize invertColorsEnabled;
 @synthesize monoAudioEnabled;
 @synthesize mFontScale;
+@synthesize reduceMotionEnabled;
 
 #define iOS7Delta (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ) ? 20 : 0 )
 
@@ -215,6 +216,15 @@
     }
 }
 
+- (void)isReduceMotionEnabled:(CDVInvokedUrlCommand*)command
+{
+    [self.commandDelegate runInBackground:^{
+        self.reduceMotionEnabled = UIAccessibilityIsReduceMotionEnabled();
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:self.reduceMotionEnabled];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }];
+}
+
 
 - (void)postNotification:(CDVInvokedUrlCommand *)command
 {
@@ -309,6 +319,7 @@
     self.guidedAccessEnabled = UIAccessibilityIsGuidedAccessEnabled();
     self.invertColorsEnabled = UIAccessibilityIsInvertColorsEnabled();
     self.monoAudioEnabled = UIAccessibilityIsMonoAudioEnabled();
+    self.reduceMotionEnabled = UIAccessibilityIsReduceMotionEnabled();
 
     NSMutableDictionary* mobileAccessibilityData = [NSMutableDictionary dictionaryWithCapacity:5];
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.voiceOverRunning] forKey:@"isScreenReaderRunning"];
@@ -316,6 +327,7 @@
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.guidedAccessEnabled] forKey:@"isGuidedAccessEnabled"];
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.invertColorsEnabled] forKey:@"isInvertColorsEnabled"];
     [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.monoAudioEnabled] forKey:@"isMonoAudioEnabled"];
+    [mobileAccessibilityData setObject:[NSNumber numberWithBool:self.reduceMotionEnabled] forKey:@"isReduceMotionEnabled"];
     return mobileAccessibilityData;
 }
 
@@ -330,6 +342,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:) name:UIAccessibilityGuidedAccessStatusDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:) name:UIAccessibilityInvertColorsStatusDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:) name:UIAccessibilityMonoAudioStatusDidChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mobileAccessibilityStatusChanged:) name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
 
         // Update the callback on start
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getMobileAccessibilityStatus]];
@@ -356,6 +369,7 @@
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIAccessibilityInvertColorsStatusDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIAccessibilityAnnouncementDidFinishNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIAccessibilityMonoAudioStatusDidChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
     }];
 }
 

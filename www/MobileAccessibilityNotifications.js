@@ -29,6 +29,7 @@ module.exports = {
     GUIDED_ACCESS_STATUS_CHANGED : "guidedaccessstatuschanged",
     INVERT_COLORS_STATUS_CHANGED : "invertcolorsstatuschanged",
     MONO_AUDIO_STATUS_CHANGED : "monoaudiostatuschanged",
+    REDUCE_MOTION_STATUS_CHANGED : "reducemotionstatuschanged",
     TOUCH_EXPLORATION_STATUS_CHANGED : "touchexplorationstatechanged",
 
     /* iOS specific UIAccessibilityNotifications  */
