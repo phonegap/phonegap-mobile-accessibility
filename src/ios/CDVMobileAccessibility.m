@@ -42,6 +42,7 @@
 @synthesize reduceMotionEnabled;
 
 #define iOS7Delta (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ) ? 20 : 0 )
+#define iOS8Delta (([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0 ) ? 30 : 0 )
 
 // //////////////////////////////////////////////////
 
@@ -219,7 +220,11 @@
 - (void)isReduceMotionEnabled:(CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
-        self.reduceMotionEnabled = UIAccessibilityIsReduceMotionEnabled();
+        if (iOS8Delta) {
+            self.reduceMotionEnabled = UIAccessibilityIsReduceMotionEnabled();
+        } else {
+            self.reduceMotionEnabled = false;
+        }
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:self.reduceMotionEnabled];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     }];
