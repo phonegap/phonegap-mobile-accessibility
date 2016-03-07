@@ -31,6 +31,7 @@ static const int BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE = 16;
     BOOL guidedAccessEnabled;
     BOOL invertColorsEnabled;
     BOOL monoAudioEnabled;
+    BOOL reduceMotionEnabled;
 }
 
 @property (strong) NSString* callbackId;
@@ -40,6 +41,7 @@ static const int BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE = 16;
 @property BOOL guidedAccessEnabled;
 @property BOOL invertColorsEnabled;
 @property BOOL monoAudioEnabled;
+@property BOOL reduceMotionEnabled;
 @property double mFontScale;
 
 
@@ -51,6 +53,7 @@ static const int BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE = 16;
 - (void) getTextZoom:(CDVInvokedUrlCommand*)command;
 - (void) setTextZoom:(CDVInvokedUrlCommand*)command;
 - (void) updateTextZoom:(CDVInvokedUrlCommand*)command;
+- (void) isReduceMotionEnabled:(CDVInvokedUrlCommand*)command;
 - (void) postNotification:(CDVInvokedUrlCommand*)command;
 - (void) start:(CDVInvokedUrlCommand*)command;
 - (void) stop:(CDVInvokedUrlCommand*)command;
