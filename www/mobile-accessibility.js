@@ -33,6 +33,7 @@ var MobileAccessibility = function() {
     this._isGuidedAccessEnabled = false;
     this._isInvertColorsEnabled = false;
     this._isMonoAudioEnabled = false;
+    this._isReduceMotionEnabled = false;
     this._isTouchExplorationEnabled = false;
     this._usePreferredTextZoom = false;
     this._isHighContrastEnabled = false;
@@ -45,6 +46,7 @@ var MobileAccessibility = function() {
         guidedaccessstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED),
         invertcolorsstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED),
         monoaudiostatuschanged          : cordova.addWindowEventHandler(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED),
+        reducemotionstatuschanged          : cordova.addWindowEventHandler(MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED),
         touchexplorationstatechanged    : cordova.addWindowEventHandler(MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED),
         highcontrastchanged             : cordova.addWindowEventHandler(MobileAccessibilityNotifications.HIGH_CONTRAST_CHANGED)
     };
@@ -62,6 +64,7 @@ function handlers() {
            mobileAccessibility.channels.closedcaptioningstatuschanged.numHandlers +
            mobileAccessibility.channels.invertcolorsstatuschanged.numHandlers +
            mobileAccessibility.channels.monoaudiostatuschanged.numHandlers +
+           mobileAccessibility.channels.reducemotionstatuschanged.numHandlers +
            mobileAccessibility.channels.guidedaccessstatuschanged.numHandlers +
            mobileAccessibility.channels.touchexplorationstatechanged.numHandlers +
            mobileAccessibility.channels.highcontrastchanged.numHandlers;
@@ -196,6 +199,14 @@ MobileAccessibility.prototype.isMonoAudioEnabled = function(callback) {
 };
 
 /**
+ * Asynchronous call to native MobileAccessibility to determine if mono audio is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isReduceMotionEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isReduceMotionEnabled", []);
+};
+
+/**
  * Asynchronous call to native MobileAccessibility to determine if Guided Access is enabled.
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
@@ -255,12 +266,12 @@ MobileAccessibility.prototype.usePreferredTextZoom = function(bool) {
         window.localStorage.setItem("MobileAccessibility.usePreferredTextZoom", bool);
     }
 
-    var callback = function(){ 
+    var callback = function(){
         // Wrapping updateTextZoom call in a function to stop
         // the event parameter propagation. This fixes an error
         // on resume where cordova tried to call apply() on the
         // event, expecting a function.
-        mobileAccessibility.updateTextZoom(); 
+        mobileAccessibility.updateTextZoom();
     };
 
     document.removeEventListener("resume", callback);
@@ -346,6 +357,10 @@ MobileAccessibility.prototype._status = function(info) {
         if (mobileAccessibility._isMonoAudioEnabled !== info.isMonoAudioEnabled) {
            mobileAccessibility._isMonoAudioEnabled = info.isMonoAudioEnabled;
            cordova.fireWindowEvent(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED, info);
+        }
+        if (mobileAccessibility._isReduceMotionEnabled !== info.isReduceMotionEnabled) {
+           mobileAccessibility._isReduceMotionEnabled = info.isReduceMotionEnabled;
+           cordova.fireWindowEvent(MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isTouchExplorationEnabled !== info.isTouchExplorationEnabled) {
             mobileAccessibility._isTouchExplorationEnabled = info.isTouchExplorationEnabled;
