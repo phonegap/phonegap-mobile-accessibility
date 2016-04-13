@@ -1,7 +1,7 @@
 {
   "name": "phonegap-plugin-mobile-accessibility",
   "description": "PhoneGap Mobile Accessibility Plugin",
-  "version": "1.0.4-dev",
+  "version": "1.0.4",
   "homepage": "http://github.com/phonegap/phonegap-mobile-accessibility#readme",
   "repository": {
     "type": "git",
