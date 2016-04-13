@@ -31,6 +31,13 @@ module.exports = {
     MONO_AUDIO_STATUS_CHANGED : "monoaudiostatuschanged",
     REDUCE_MOTION_STATUS_CHANGED : "reducemotionstatuschanged",
     TOUCH_EXPLORATION_STATUS_CHANGED : "touchexplorationstatechanged",
+    BOLD_TEXT_STATUS_CHANGED : "boldtextstatuschanged",
+    DARKER_SYSTEM_COLORS_STATUS_CHANGED : "darkersystemcolorsstatuschanged",
+    GRAYSCALE_STATUS_CHANGED : "grayscalestatuschanged",
+    REDUCE_TRANSPARENCY_STATUS_CHANGED : "reducetransparencystatuschanged",
+    SPEAK_SCREEN_STATUS_CHANGED : "speakscreenstatuschanged",
+    SPEAK_SELECTION_STATUS_CHANGED : "speakselectionstatuschanged",
+    SWITCH_CONTROL_STATUS_CHANGED : "switchcontrolstatuschanged",
 
     /* iOS specific UIAccessibilityNotifications  */
     SCREEN_CHANGED : 1000,

@@ -26,38 +26,57 @@ static const int BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE = 16;
 @interface CDVMobileAccessibility : CDVPlugin {
     NSString* callbackId;
     NSString* commandCallbackId;
-    BOOL voiceOverRunning;
+    BOOL boldTextEnabled;
     BOOL closedCaptioningEnabled;
+    BOOL darkerSystemColorsEnabled;
+    BOOL grayscaleEnabled;
     BOOL guidedAccessEnabled;
     BOOL invertColorsEnabled;
     BOOL monoAudioEnabled;
     BOOL reduceMotionEnabled;
+    BOOL reduceTransparencyEnabled;
+    BOOL speakScreenEnabled;
+    BOOL speakSelectionEnabled;
+    BOOL switchControlRunning;
+    BOOL voiceOverRunning;
 }
 
 @property (strong) NSString* callbackId;
 @property (strong) NSString* commandCallbackId;
-@property BOOL voiceOverRunning;
+@property BOOL boldTextEnabled;
 @property BOOL closedCaptioningEnabled;
+@property BOOL darkerSystemColorsEnabled;
+@property BOOL grayscaleEnabled;
 @property BOOL guidedAccessEnabled;
 @property BOOL invertColorsEnabled;
 @property BOOL monoAudioEnabled;
 @property BOOL reduceMotionEnabled;
+@property BOOL reduceTransparencyEnabled;
+@property BOOL speakScreenEnabled;
+@property BOOL speakSelectionEnabled;
+@property BOOL switchControlRunning;
+@property BOOL voiceOverRunning;
 @property double mFontScale;
 
 
-- (void) isScreenReaderRunning:(CDVInvokedUrlCommand*)command;
+- (void) isBoldTextEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isClosedCaptioningEnabled:(CDVInvokedUrlCommand*)command;
+- (void) isDarkerSystemColorsEnabled:(CDVInvokedUrlCommand*)command;
+- (void) isGrayscaleEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isGuidedAccessEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isInvertColorsEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isMonoAudioEnabled:(CDVInvokedUrlCommand*)command;
+- (void) isReduceMotionEnabled:(CDVInvokedUrlCommand*)command;
+- (void) isReduceTransparencyEnabled:(CDVInvokedUrlCommand*)command;
+- (void) isScreenReaderRunning:(CDVInvokedUrlCommand*)command;
+- (void) isSpeakScreenEnabled:(CDVInvokedUrlCommand*)command;
+- (void) isSpeakSelectionEnabled:(CDVInvokedUrlCommand*)command;
+- (void) isSwitchControlRunning:(CDVInvokedUrlCommand*)command;
 - (void) getTextZoom:(CDVInvokedUrlCommand*)command;
 - (void) setTextZoom:(CDVInvokedUrlCommand*)command;
 - (void) updateTextZoom:(CDVInvokedUrlCommand*)command;
-- (void) isReduceMotionEnabled:(CDVInvokedUrlCommand*)command;
 - (void) postNotification:(CDVInvokedUrlCommand*)command;
 - (void) start:(CDVInvokedUrlCommand*)command;
 - (void) stop:(CDVInvokedUrlCommand*)command;
 
 @end
-
-

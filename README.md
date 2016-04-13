@@ -168,9 +168,36 @@ If TalkBack is running but ChromeVox is not active, this method is useful to ale
 - Amazon Fire OS
 - Android
 
+--------------------------------------------------------
+#### MobileAccessibility.isBoldTextEnabled(callback)
+
+Makes an asynchronous call to native `MobileAccessibility` to determine if Bold Text is enabled.
+
+##### Parameters
+
+- __callback__ (Function) A callback method to receive the boolean result asynchronously from the native `MobileAccessibility` plugin.
+
+##### Usage
+
+```javascript
+    function isBoldTextEnabledCallback(boolean) {
+        if (boolean) {
+            console.log("Bold Text: ON");
+            // Do something to improve the behavior of the application while Bold Text is enabled.
+        } else {
+            console.log("Bold Text: OFF");
+        }
+    }
+
+    MobileAccessibility.isBoldTextEnabled(isBoldTextEnabledCallback);
+```
+
+##### Supported Platforms
+
+- iOS
+
 ------------------------------------------------------------
 #### MobileAccessibility.isClosedCaptioningEnabled(callback)
-
 
 Makes an asynchronous call to native `MobileAccessibility` to determine if system-level closed captioning is enabled on the device.
 
@@ -200,8 +227,63 @@ Makes an asynchronous call to native `MobileAccessibility` to determine if syste
 - iOS
 
 --------------------------------------------------------
-#### MobileAccessibility.isGuidedAccessEnabled(callback)
+#### MobileAccessibility.isDarkerSystemColorsEnabled(callback)
 
+Makes an asynchronous call to native `MobileAccessibility` to determine if Darker System Colors is enabled.
+
+##### Parameters
+
+- __callback__ (Function) A callback method to receive the boolean result asynchronously from the native `MobileAccessibility` plugin.
+
+##### Usage
+
+```javascript
+    function isDarkerSystemColorsEnabledCallback(boolean) {
+        if (boolean) {
+            console.log("Darker System Colors: ON");
+            // Do something to improve the behavior of the application while Darker System Colors is enabled.
+        } else {
+            console.log("Darker System Colors: OFF");
+        }
+    }
+
+    MobileAccessibility.isDarkerSystemColorsEnabled(isDarkerSystemColorsEnabledCallback);
+```
+
+##### Supported Platforms
+
+- iOS
+
+--------------------------------------------------------
+#### MobileAccessibility.isGrayscaleEnabled(callback)
+
+Makes an asynchronous call to native `MobileAccessibility` to determine if Grayscale is enabled.
+
+##### Parameters
+
+- __callback__ (Function) A callback method to receive the boolean result asynchronously from the native `MobileAccessibility` plugin.
+
+##### Usage
+
+```javascript
+    function isGrayscaleEnabledCallback(boolean) {
+        if (boolean) {
+            console.log("Grayscale: ON");
+            // Do something to improve the behavior of the application while Grayscale is enabled.
+        } else {
+            console.log("Grayscale: OFF");
+        }
+    }
+
+    MobileAccessibility.isGrayscaleEnabled(isGrayscaleEnabledCallback);
+```
+
+##### Supported Platforms
+
+- iOS
+
+--------------------------------------------------------
+#### MobileAccessibility.isGuidedAccessEnabled(callback)
 
 Makes an asynchronous call to native `MobileAccessibility` to determine if Guided Access is enabled.
 
@@ -230,7 +312,6 @@ Makes an asynchronous call to native `MobileAccessibility` to determine if Guide
 
 --------------------------------------------------------
 #### MobileAccessibility.isInvertColorsEnabled(callback)
-
 
 Makes an asynchronous call to native `MobileAccessibility` to determine if the display colors have been inverted.
 
@@ -288,8 +369,7 @@ Makes an asynchronous call to native `MobileAccessibility` to determine if mono 
 ----------------------------------------------------
 #### MobileAccessibility.isReduceMotionEnabled(callback)
 
-
-An iOS-specific proxy for the `MobileAccessibility.UIAccessibilityIsReduceMotionEnabled` method.
+Makes an asynchronous call to native `MobileAccessibility` to determine if reduce motion is enabled.
 
 ##### Parameters
 
@@ -308,6 +388,118 @@ An iOS-specific proxy for the `MobileAccessibility.UIAccessibilityIsReduceMotion
     }
 
     MobileAccessibility.isReduceMotionEnabled(isReduceMotionEnabledCallback);
+```
+
+##### Supported Platforms
+
+- iOS
+
+----------------------------------------------------
+#### MobileAccessibility.isReduceTransparencyEnabled(callback)
+
+Makes an asynchronous call to native `MobileAccessibility` to determine if reduce transparency is enabled.
+
+##### Parameters
+
+- __callback__ (Function) A callback method to receive the boolean result asynchronously from the native `MobileAccessibility` plugin.
+
+##### Usage
+
+```javascript
+    function isReduceTransparencyEnabledCallback(boolean) {
+        if (boolean) {
+            console.log("Reduce Transparency: ON");
+            // Do something to improve the behavior of the application when reduce transparency is enabled.
+        } else {
+            console.log("Reduce Transparency: OFF");
+        }
+    }
+
+    MobileAccessibility.isReduceTransparencyEnabled(isReduceTransparencyEnabledCallback);
+```
+
+##### Supported Platforms
+
+- iOS
+
+----------------------------------------------------
+#### MobileAccessibility.isSpeakScreenEnabled(callback)
+
+Makes an asynchronous call to native `MobileAccessibility` to determine if speak screen is enabled.
+
+##### Parameters
+
+- __callback__ (Function) A callback method to receive the boolean result asynchronously from the native `MobileAccessibility` plugin.
+
+##### Usage
+
+```javascript
+    function isSpeakScreenEnabledCallback(boolean) {
+        if (boolean) {
+            console.log("Speak Screen: ON");
+            // Do something to improve the behavior of the application when Speak Screen is enabled.
+        } else {
+            console.log("Speak Screen: OFF");
+        }
+    }
+
+    MobileAccessibility.isSpeakScreenEnabled(isSpeakScreenEnabledCallback);
+```
+
+##### Supported Platforms
+
+- iOS
+
+----------------------------------------------------
+#### MobileAccessibility.isSpeakSelectionEnabled(callback)
+
+Makes an asynchronous call to native `MobileAccessibility` to determine if speak selection is enabled.
+
+##### Parameters
+
+- __callback__ (Function) A callback method to receive the boolean result asynchronously from the native `MobileAccessibility` plugin.
+
+##### Usage
+
+```javascript
+    function isSpeakSelectionEnabledCallback(boolean) {
+        if (boolean) {
+            console.log("Speak Selection: ON");
+            // Do something to improve the behavior of the application when Speak Selection is enabled.
+        } else {
+            console.log("Speak Selection: OFF");
+        }
+    }
+
+    MobileAccessibility.isSpeakSelectionEnabled(isSpeakSelectionEnabledCallback);
+```
+
+##### Supported Platforms
+
+- iOS
+
+----------------------------------------------------
+#### MobileAccessibility.isSwitchControlRunning(callback)
+
+Makes an asynchronous call to native `MobileAccessibility` to determine if switch control is running.
+
+##### Parameters
+
+- __callback__ (Function) A callback method to receive the boolean result asynchronously from the native `MobileAccessibility` plugin.
+
+##### Usage
+
+```javascript
+    function isSwitchControlRunningCallback(boolean) {
+        if (boolean) {
+            console.log("Switch Control: ON");
+            // Do something to improve the behavior of the application when Switch Control is running.
+        } else {
+            console.log("Switch Control: OFF");
+        }
+    }
+
+    MobileAccessibility.isSwitchControlRunning(isSwitchControlRunningCallback);
 ```
 
 ##### Supported Platforms
@@ -528,13 +720,236 @@ Stops speech.
 
 The following event constants are for `window` events, to which an application can listen for notification of changes in the status of the accessibility features on the device.
 
-- MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED
+- MobileAccessibilityNotifications.BOLD_TEXT_STATUS_CHANGED
 - MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED
+- MobileAccessibilityNotifications.DARKER_SYSTEM_COLORS_STATUS_CHANGED
+- MobileAccessibilityNotifications.GRAYSCALE_STATUS_CHANGED
 - MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED
 - MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED
 - MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED
 - MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED
+- MobileAccessibilityNotifications.REDUCE_TRANSPARENCY_STATUS_CHANGED
+- MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED
+- MobileAccessibilityNotifications.SPEAK_SCREEN_STATUS_CHANGED
+- MobileAccessibilityNotifications.SPEAK_SELECTION_STATUS_CHANGED
+- MobileAccessibilityNotifications.SWITCH_CONTROL_STATUS_CHANGED
 - MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED
+
+----------------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.BOLD_TEXT_STATUS_CHANGED (boldtextstatuschanged)
+
+The event fires when Bold Text has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If Bold Text is active, `info.isBoldTextEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onBoldTextStatusChanged(info) {
+        if (info && typeof info.isBoldTextEnabled !== "undefined") {
+            if (info.isBoldTextEnabled) {
+                console.log("Bold Text: ON");
+                // Do something to improve the behavior of the application while Bold Text is enabled.
+            } else {
+                console.log("Bold Text: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.BOLD_TEXT_STATUS_CHANGED, onBoldTextStatusChanged, false);
+```
+
+------------------------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED (closedcaptioningstatuschanged)
+
+The event fires when system-level closed captioning on the device turns on or off.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If closed captioning is active, `info.isClosedCaptioningEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onClosedCaptioningStatusChanged(info) {
+        if (info && typeof info.isClosedCaptioningEnabled !== "undefined") {
+            if (info.isClosedCaptioningEnabled) {
+                console.log("Closed Captioning: ON");
+                // Do something to improve the behavior of the application while closed captioning is enabled.
+            } else {
+                console.log("Closed Captioning: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED, onClosedCaptioningStatusChanged, false);
+```
+
+----------------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.DARKER_SYSTEM_COLORS_STATUS_CHANGED (darkersystemcolorsstatuschanged)
+
+The event fires when Darker System Colors has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If Darker System Colors is active, `info.isDarkerSystemColorsEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onDarkerSystemColorsStatusChanged(info) {
+        if (info && typeof info.isDarkerSystemColorsEnabled !== "undefined") {
+            if (info.isDarkerSystemColorsEnabled) {
+                console.log("Darker System Colors: ON");
+                // Do something to improve the behavior of the application while Darker System Colors is enabled.
+            } else {
+                console.log("Darker System Colors: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.DARKER_SYSTEM_COLORS_STATUS_CHANGED, onDarkerSystemColorsStatusChanged, false);
+```
+
+----------------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.GRAYSCALE_STATUS_CHANGED (grayscalestatuschanged)
+
+The event fires when Grayscale has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If Grayscale is active, `info.isGrayscaleEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onGrayscaleStatusChanged(info) {
+        if (info && typeof info.isGrayscaleEnabled !== "undefined") {
+            if (info.isGrayscaleEnabled) {
+                console.log("Grayscale: ON");
+                // Do something to improve the behavior of the application while Grayscale is enabled.
+            } else {
+                console.log("Grayscale: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.GRAYSCALE_STATUS_CHANGED, onGrayscaleStatusChanged, false);
+```
+
+----------------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED (guidedaccessstatuschanged)
+
+The event fires when Guided Access has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If Guided Access is active, `info.isGuidedAccessEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onGuidedAccessStatusChanged(info) {
+        if (info && typeof info.isGuidedAccessEnabled !== "undefined") {
+            if (info.isGuidedAccessEnabled) {
+                console.log("Guided Access: ON");
+                // Do something to improve the behavior of the application while Guided Access is enabled.
+            } else {
+                console.log("Guided Access: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED, onGuidedAccessStatusChanged, false);
+```
+
+----------------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED (invertcolorsstatuschanged)
+
+The event fires when Invert Colors has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If Invert Colors is active, `info.isInvertColorsEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onInvertColorsStatusChanged(info) {
+        if (info && typeof info.isInvertColorsEnabled !== "undefined") {
+            if (info.isInvertColorsEnabled) {
+                console.log("Invert Colors: ON");
+                // Do something to improve the behavior of the application while Invert Colors is enabled.
+            } else {
+                console.log("Invert Colors: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED, onInvertColorsStatusChanged, false);
+```
+
+----------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED (monoaudiostatuschanged)
+
+The event fires when Mono Audio has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If Mono Audio is active, `info.isMonoAudioEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onMonoAudioStatusChanged(info) {
+        if (info && typeof info.isMonoAudioEnabled !== "undefined") {
+            if (info.isMonoAudioEnabled) {
+                console.log("Mono Audio: ON");
+                // Do something to improve the behavior of the application while Mono Audio is enabled.
+            } else {
+                console.log("Mono Audio: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED, onMonoAudioStatusChanged, false);
+```
+
+----------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED (reducemotionstatuschanged)
+
+The event fires when Reduce Motion has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If Reduce Motion is active, `info.isReduceMotionEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onReduceMotionStatusChanged(info) {
+        if (info && typeof info.isReduceMotionEnabled !== "undefined") {
+            if (info.isReduceMotionEnabled) {
+                console.log("Reduce Motion: ON");
+                // Do something to improve the behavior of the application while Reduce Motion is enabled.
+            } else {
+                console.log("Reduce Motion: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED, onMReduceMotionStatusChanged, false);
+```
+
+----------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.REDUCE_TRANSPARENCY_STATUS_CHANGED (reducetransparencystatuschanged)
+
+The event fires when Reduce Transparency has been enabled on an iOS device.
+The event returns an object, `info`, with the current status of accessibility features on the device.
+If Reduce Transparency is active, `info.isReduceTransparencyEnabled` will equal `true`.
+
+```javascript
+    // Define a persistent callback method to handle the event
+    function onReduceTransparencyStatusChanged(info) {
+        if (info && typeof info.isReduceTransparencyEnabled !== "undefined") {
+            if (info.isReduceTransparencyEnabled) {
+                console.log("Reduce Transparency: ON");
+                // Do something to improve the behavior of the application while Reduce Transparency is enabled.
+            } else {
+                console.log("Reduce Transparency: OFF");
+            }
+        }
+    }
+
+    // Register the callback method to handle the event
+    window.addEventListener(MobileAccessibilityNotifications.REDUCE_TRANSPARENCY_STATUS_CHANGED, onReduceTransparencyStatusChanged, false);
+```
 
 ----------------------------------------------------------------------------------------------
 #### MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED (screenreaderstatuschanged)
@@ -560,124 +975,77 @@ If a screen reader is active, `info.isScreenReaderRunning` will equal `true`.
     window.addEventListener(MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED, onScreenReaderStatusChanged, false);
 ```
 
-------------------------------------------------------------------------------------------------------
-#### MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED (closedcaptioningstatuschanged)
+----------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.SPEAK_SCREEN_STATUS_CHANGED (speakscreenstatuschanged)
 
-The event fires when system-level closed captioning on the device turns on or off.
+The event fires when Speak Screen has been enabled on an iOS device.
 The event returns an object, `info`, with the current status of accessibility features on the device.
-If a screen reader is active, `info.isClosedCaptioningEnabled` will equal `true`.
+If Speak Screen is active, `info.isSpeakScreenEnabled` will equal `true`.
 
 ```javascript
     // Define a persistent callback method to handle the event
-    function onClosedCaptioningStatusChanged(info) {
-        if (info && typeof info.isClosedCaptioningEnabled !== "undefined") {
-            if (info.isClosedCaptioningEnabled) {
-                console.log("Closed Captioning: ON");
-                // Do something to improve the behavior of the application while closed captioning is enabled.
+    function onSpeakScreenStatusChanged(info) {
+        if (info && typeof info.isSpeakScreenEnabled !== "undefined") {
+            if (info.isSpeakScreenEnabled) {
+                console.log("Speak Screen: ON");
+                // Do something to improve the behavior of the application while Speak Screen is enabled.
             } else {
-                console.log("Closed Captioning: OFF");
+                console.log("Speak Screen: OFF");
             }
         }
     }
 
     // Register the callback method to handle the event
-    window.addEventListener(MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED, onClosedCaptioningStatusChanged, false);
-```
-
-----------------------------------------------------------------------------------------------
-#### MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED (guidedaccessstatuschanged)
-
-The event fires when Guided Access has been enabled on an iOS device.
-The event returns an object, `info`, with the current status of accessibility features on the device.
-If a screen reader is active, `info.isGuidedAccessEnabled` will equal `true`.
-
-```javascript
-    // Define a persistent callback method to handle the event
-    function onGuidedAccessStatusChanged(info) {
-        if (info && typeof info.isGuidedAccessEnabled !== "undefined") {
-            if (info.isGuidedAccessEnabled) {
-                console.log("Guided Access: ON");
-                // Do something to improve the behavior of the application while Guided Access is enabled.
-            } else {
-                console.log("Guided Access: OFF");
-            }
-        }
-    }
-
-    // Register the callback method to handle the event
-    window.addEventListener(MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED, onGuidedAccessStatusChanged, false);
-```
-
-----------------------------------------------------------------------------------------------
-#### MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED (invertcolorsstatuschanged)
-
-The event fires when Invert Colors has been enabled on an iOS device.
-The event returns an object, `info`, with the current status of accessibility features on the device.
-If a screen reader is active, `info.isInvertColorsEnabled` will equal `true`.
-
-```javascript
-    // Define a persistent callback method to handle the event
-    function onInvertColorsStatusChanged(info) {
-        if (info && typeof info.isInvertColorsEnabled !== "undefined") {
-            if (info.isInvertColorsEnabled) {
-                console.log("Invert Colors: ON");
-                // Do something to improve the behavior of the application while Invert Colors is enabled.
-            } else {
-                console.log("Invert Colors: OFF");
-            }
-        }
-    }
-
-    // Register the callback method to handle the event
-    window.addEventListener(MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED, onInvertColorsStatusChanged, false);
+    window.addEventListener(MobileAccessibilityNotifications.SPEAK_SCREEN_STATUS_CHANGED, onSpeakScreenStatusChanged, false);
 ```
 
 ----------------------------------------------------------------------------------------
-#### MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED (monoaudiostatuschanged)
+#### MobileAccessibilityNotifications.SPEAK_SELECTION_STATUS_CHANGED (speakselectionstatuschanged)
 
-The event fires when Mono Audio has been enabled on an iOS device.
+The event fires when Speak Selection has been enabled on an iOS device.
 The event returns an object, `info`, with the current status of accessibility features on the device.
-If a screen reader is active, `info.isMonoAudioEnabled` will equal `true`.
+If Speak Selection is active, `info.isSpeakSelectionEnabled` will equal `true`.
 
 ```javascript
     // Define a persistent callback method to handle the event
-    function onMonoAudioStatusChanged(info) {
-        if (info && typeof info.isMonoAudioEnabled !== "undefined") {
-            if (info.isMonoAudioEnabled) {
-                console.log("Mono Audio: ON");
-                // Do something to improve the behavior of the application while Mono Audio is enabled.
+    function onSpeakSelectionStatusChanged(info) {
+        if (info && typeof info.isSpeakSelectionEnabled !== "undefined") {
+            if (info.isSpeakSelectionEnabled) {
+                console.log("Speak Selection: ON");
+                // Do something to improve the behavior of the application while Speak Selection is enabled.
             } else {
-                console.log("Mono Audio: OFF");
+                console.log("Speak Selection: OFF");
             }
         }
     }
 
     // Register the callback method to handle the event
-    window.addEventListener(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED, onMonoAudioStatusChanged, false);
+    window.addEventListener(MobileAccessibilityNotifications.SPEAK_SELECTION_STATUS_CHANGED, onSpeakSelectionStatusChanged, false);
 ```
 
-----------------------------------------------------------------------------------------
-#### MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED (reducemotionstatuschanged)
 
-The event fires when Reduce Motion has been enabled on an iOS device.
+----------------------------------------------------------------------------------------
+#### MobileAccessibilityNotifications.SWITCH_CONTROL_STATUS_CHANGED (switchcontrolstatuschanged)
+
+The event fires when Switch Control is running on an iOS device.
 The event returns an object, `info`, with the current status of accessibility features on the device.
-If a screen reader is active, `info.isReduceMotionEnabled` will equal `true`.
+If Switch Control is running, `info.isSwitchControlRunning` will equal `true`.
 
 ```javascript
     // Define a persistent callback method to handle the event
-    function onReduceMotionStatusChanged(info) {
-        if (info && typeof info.isReduceMotionEnabled !== "undefined") {
-            if (info.isReduceMotionEnabled) {
-                console.log("Reduce Motion: ON");
-                // Do something to improve the behavior of the application while Reduce Motion is enabled.
+    function onSwitchControlStatusChanged(info) {
+        if (info && typeof info.isSwitchControlRunning !== "undefined") {
+            if (info.isSwitchControlRunning) {
+                console.log("Switch Control: ON");
+                // Do something to improve the behavior of the application while Switch Control is running.
             } else {
-                console.log("Reduce Motion: OFF");
+                console.log("Switch Control: OFF");
             }
         }
     }
 
     // Register the callback method to handle the event
-    window.addEventListener(MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED, onMReduceMotionStatusChanged, false);
+    window.addEventListener(MobileAccessibilityNotifications.SWITCH_CONTROL_STATUS_CHANGED, onSwitchControlStatusChanged, false);
 ```
 
 ------------------------------------------------------------------------------------------------------
@@ -685,7 +1053,7 @@ If a screen reader is active, `info.isReduceMotionEnabled` will equal `true`.
 
 The event fires when Touch Exploration has been enabled on an Android device.
 The event returns an object, `info`, with the current status of accessibility features on the device.
-If a screen reader is active, `info.isTouchExplorationEnabled` will equal `true`.
+If Touch Exploration is active, `info.isTouchExplorationEnabled` will equal `true`.
 
 ```javascript
     // Define a persistent callback method to handle the event

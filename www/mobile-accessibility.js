@@ -28,12 +28,19 @@ var argscheck = require('cordova/argscheck'),
     MobileAccessibilityNotifications = require('phonegap-plugin-mobile-accessibility.MobileAccessibilityNotifications');
 
 var MobileAccessibility = function() {
-    this._isScreenReaderRunning = false;
+    this._isBoldTextEnabled = false;
     this._isClosedCaptioningEnabled = false;
+    this._isDarkerSystemColorsEnabled = false;
+    this._isGrayscaleEnabled = false;
     this._isGuidedAccessEnabled = false;
     this._isInvertColorsEnabled = false;
     this._isMonoAudioEnabled = false;
     this._isReduceMotionEnabled = false;
+    this._isReduceTransparencyEnabled = false;
+    this._isScreenReaderRunning = false;
+    this._isSpeakScreenEnabled = false;
+    this._isSpeakSelectionEnabled = false;
+    this._isSwitchControlRunning = false;
     this._isTouchExplorationEnabled = false;
     this._usePreferredTextZoom = false;
     this._isHighContrastEnabled = false;
@@ -41,12 +48,19 @@ var MobileAccessibility = function() {
 
     // Create new event handlers on the window (returns a channel instance)
     this.channels = {
-        screenreaderstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED),
+        boldtextstatuschanged           : cordova.addWindowEventHandler(MobileAccessibilityNotifications.BOLD_TEXT_STATUS_CHANGED),
         closedcaptioningstatuschanged   : cordova.addWindowEventHandler(MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED),
+        darkersystemcolorsstatuschanged : cordova.addWindowEventHandler(MobileAccessibilityNotifications.DARKER_SYSTEM_COLORS_STATUS_CHANGED),
+        grayscalestatuschanged          : cordova.addWindowEventHandler(MobileAccessibilityNotifications.GRAYSCALE_STATUS_CHANGED),
         guidedaccessstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.GUIDED_ACCESS_STATUS_CHANGED),
         invertcolorsstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.INVERT_COLORS_STATUS_CHANGED),
         monoaudiostatuschanged          : cordova.addWindowEventHandler(MobileAccessibilityNotifications.MONO_AUDIO_STATUS_CHANGED),
-        reducemotionstatuschanged          : cordova.addWindowEventHandler(MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED),
+        reducemotionstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED),
+        reducetransparencystatuschanged : cordova.addWindowEventHandler(MobileAccessibilityNotifications.REDUCE_TRANSPARENCY_STATUS_CHANGED),
+        screenreaderstatuschanged       : cordova.addWindowEventHandler(MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED),
+        speakscreenstatuschanged        : cordova.addWindowEventHandler(MobileAccessibilityNotifications.SPEAK_SCREEN_STATUS_CHANGED),
+        speakselectionstatuschanged     : cordova.addWindowEventHandler(MobileAccessibilityNotifications.SPEAK_SELECTION_STATUS_CHANGED),
+        switchcontrolstatuschanged      : cordova.addWindowEventHandler(MobileAccessibilityNotifications.SWITCH_CONTROL_STATUS_CHANGED),
         touchexplorationstatechanged    : cordova.addWindowEventHandler(MobileAccessibilityNotifications.TOUCH_EXPLORATION_STATUS_CHANGED),
         highcontrastchanged             : cordova.addWindowEventHandler(MobileAccessibilityNotifications.HIGH_CONTRAST_CHANGED)
     };
@@ -60,12 +74,19 @@ var MobileAccessibility = function() {
  * @ignore
  */
 function handlers() {
-    return mobileAccessibility.channels.screenreaderstatuschanged.numHandlers +
+    return mobileAccessibility.channels.boldtextstatuschanged.numHandlers +
            mobileAccessibility.channels.closedcaptioningstatuschanged.numHandlers +
+           mobileAccessibility.channels.darkersystemcolorsstatuschanged.numHandlers +
+           mobileAccessibility.channels.grayscalestatuschanged.numHandlers +
+           mobileAccessibility.channels.guidedaccessstatuschanged.numHandlers +
            mobileAccessibility.channels.invertcolorsstatuschanged.numHandlers +
            mobileAccessibility.channels.monoaudiostatuschanged.numHandlers +
            mobileAccessibility.channels.reducemotionstatuschanged.numHandlers +
-           mobileAccessibility.channels.guidedaccessstatuschanged.numHandlers +
+           mobileAccessibility.channels.reducetransparencystatuschanged.numHandlers +
+           mobileAccessibility.channels.screenreaderstatuschanged.numHandlers +
+           mobileAccessibility.channels.speakscreenstatuschanged.numHandlers +
+           mobileAccessibility.channels.speakselectionstatuschanged.numHandlers +
+           mobileAccessibility.channels.switchcontrolstatuschanged.numHandlers +
            mobileAccessibility.channels.touchexplorationstatechanged.numHandlers +
            mobileAccessibility.channels.highcontrastchanged.numHandlers;
 };
@@ -175,11 +196,43 @@ MobileAccessibility.prototype.injectLocalAndroidVoxScript = function() {
 };
 
 /**
- * Asynchronous call to native MobileAccessibility to determine if closed captioning is enabled.
+ * Asynchronous call to native MobileAccessibility to determine if Bold Text is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isBoldTextEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isBoldTextEnabled", []);
+};
+
+/**
+ * Asynchronous call to native MobileAccessibility to determine if Closed Captioning is enabled.
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isClosedCaptioningEnabled = function(callback) {
     exec(callback, null, "MobileAccessibility", "isClosedCaptioningEnabled", []);
+};
+
+/**
+ * Asynchronous call to native MobileAccessibility to determine if Darker System Colors are enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isDarkerSystemColorsEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isDarkerSystemColorsEnabled", []);
+};
+
+/**
+ * Asynchronous call to native MobileAccessibility to determine if Grayscale is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isGrayscaleEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isGrayscaleEnabled", []);
+};
+
+/**
+ * Asynchronous call to native MobileAccessibility to determine if Guided Access is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isGuidedAccessEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isGuidedAccessEnabled", []);
 };
 
 /**
@@ -191,7 +244,7 @@ MobileAccessibility.prototype.isInvertColorsEnabled = function(callback) {
 };
 
 /**
- * Asynchronous call to native MobileAccessibility to determine if mono audio is enabled.
+ * Asynchronous call to native MobileAccessibility to determine if Mono Audio is enabled.
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isMonoAudioEnabled = function(callback) {
@@ -199,7 +252,7 @@ MobileAccessibility.prototype.isMonoAudioEnabled = function(callback) {
 };
 
 /**
- * Asynchronous call to native MobileAccessibility to determine if mono audio is enabled.
+ * Asynchronous call to native MobileAccessibility to determine if Reduce Motion is enabled.
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
 MobileAccessibility.prototype.isReduceMotionEnabled = function(callback) {
@@ -207,11 +260,35 @@ MobileAccessibility.prototype.isReduceMotionEnabled = function(callback) {
 };
 
 /**
- * Asynchronous call to native MobileAccessibility to determine if Guided Access is enabled.
+ * Asynchronous call to native MobileAccessibility to determine if Reduce Transparency is enabled.
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
-MobileAccessibility.prototype.isGuidedAccessEnabled = function(callback) {
-    exec(callback, null, "MobileAccessibility", "isGuidedAccessEnabled", []);
+MobileAccessibility.prototype.isReduceTransparencyEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isReduceTransparencyEnabled", []);
+};
+
+/**
+ * Asynchronous call to native MobileAccessibility to determine if Speak Screen is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isSpeakScreenEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isSpeakScreenEnabled", []);
+};
+
+/**
+ * Asynchronous call to native MobileAccessibility to determine if Speak Selection is enabled.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isSpeakSelectionEnabled = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isSpeakSelectionEnabled", []);
+};
+
+/**
+ * Asynchronous call to native MobileAccessibility to determine if Switch Control is running.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+MobileAccessibility.prototype.isSwitchControlRunning = function(callback) {
+    exec(callback, null, "MobileAccessibility", "isSwitchControlRunning", []);
 };
 
 /**
@@ -328,23 +405,39 @@ MobileAccessibility.prototype.stop = function() {
  * Callback from native MobileAccessibility returning an object which describes the status of MobileAccessibility features.
  *
  * @param {Object} info
- * @config {Boolean} [isScreenReaderRunning] Boolean to indicate screen reader status.
+ * @config {Boolean} [isBoldTextEnabled] Boolean to indicate bold text status (ios).
  * @config {Boolean} [isClosedCaptioningEnabled] Boolean to indicate closed captioning status.
+ * @config {Boolean} [isDarkerSystemColorsEnabled] Boolean to indicate darker system colors status (ios).
+ * @config {Boolean} [isGrayscaleEnabled] Boolean to indicate grayscale status (ios).
  * @config {Boolean} [isGuidedAccessEnabled] Boolean to indicate guided access status (ios).
  * @config {Boolean} [isInvertColorsEnabled] Boolean to indicate invert colors status (ios).
  * @config {Boolean} [isMonoAudioEnabled] Boolean to indicate mono audio status (ios).
+ * @config {Boolean} [isReduceMotionEnabled] Boolean to indicate reduce motion status (ios).
+ * @config {Boolean} [isReduceTransparencyEnabled] Boolean to indicate reduce transparency status (ios).
+ * @config {Boolean} [isScreenReaderRunning] Boolean to indicate screen reader status.
+ * @config {Boolean} [isSpeakScreenEnabled] Boolean to indicate speak screen status (ios).
+ * @config {Boolean} [isSpeakSelectionEnabled] Boolean to indicate speak selection status (ios).
+ * @config {Boolean} [isSwitchControlRunning] Boolean to indicate switch control status (ios).
  * @config {Boolean} [isTouchExplorationEnabled] Boolean to indicate touch exploration status (android).
  */
 MobileAccessibility.prototype._status = function(info) {
     if (info) {
         mobileAccessibility.activateOrDeactivateChromeVox(info.isScreenReaderRunning);
-        if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {
-            mobileAccessibility._isScreenReaderRunning = info.isScreenReaderRunning;
-            cordova.fireWindowEvent(MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED, info);
+        if (mobileAccessibility._isBoldTextEnabled !== info.isBoldTextEnabled) {
+            mobileAccessibility._isBoldTextEnabled = info.isBoldTextEnabled;
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.BOLD_TEXT_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isClosedCaptioningEnabled !== info.isClosedCaptioningEnabled) {
             mobileAccessibility._isClosedCaptioningEnabled = info.isClosedCaptioningEnabled;
             cordova.fireWindowEvent(MobileAccessibilityNotifications.CLOSED_CAPTIONING_STATUS_CHANGED, info);
+        }
+        if (mobileAccessibility._isDarkerSystemColorsEnabled !== info.isDarkerSystemColorsEnabled) {
+            mobileAccessibility._isDarkerSystemColorsEnabled = info.isDarkerSystemColorsEnabled;
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.DARKER_SYSTEM_COLORS_STATUS_CHANGED, info);
+        }
+        if (mobileAccessibility._isGrayscaleEnabled !== info.isGrayscaleEnabled) {
+            mobileAccessibility._isGrayscaleEnabled = info.isGrayscaleEnabled;
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.GRAYSCALE_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isGuidedAccessEnabled !== info.isGuidedAccessEnabled) {
             mobileAccessibility._isGuidedAccessEnabled = info.isGuidedAccessEnabled;
@@ -361,6 +454,26 @@ MobileAccessibility.prototype._status = function(info) {
         if (mobileAccessibility._isReduceMotionEnabled !== info.isReduceMotionEnabled) {
            mobileAccessibility._isReduceMotionEnabled = info.isReduceMotionEnabled;
            cordova.fireWindowEvent(MobileAccessibilityNotifications.REDUCE_MOTION_STATUS_CHANGED, info);
+        }
+        if (mobileAccessibility._isReduceTransparencyEnabled !== info.isReduceTransparencyEnabled) {
+           mobileAccessibility._isReduceTransparencyEnabled = info.isReduceTransparencyEnabled;
+           cordova.fireWindowEvent(MobileAccessibilityNotifications.REDUCE_TRANSPARENCY_STATUS_CHANGED, info);
+        }
+        if (mobileAccessibility._isScreenReaderRunning !== info.isScreenReaderRunning) {
+            mobileAccessibility._isScreenReaderRunning = info.isScreenReaderRunning;
+            cordova.fireWindowEvent(MobileAccessibilityNotifications.SCREEN_READER_STATUS_CHANGED, info);
+        }
+        if (mobileAccessibility._isSpeakScreenEnabled !== info.isSpeakScreenEnabled) {
+           mobileAccessibility._isSpeakScreenEnabled = info.isSpeakScreenEnabled;
+           cordova.fireWindowEvent(MobileAccessibilityNotifications.SPEAK_SCREEN_STATUS_CHANGED, info);
+        }
+        if (mobileAccessibility._isSpeakSelectionEnabled !== info.isSpeakSelectionEnabled) {
+           mobileAccessibility._isSpeakSelectionEnabled = info.isSpeakSelectionEnabled;
+           cordova.fireWindowEvent(MobileAccessibilityNotifications.SPEAK_SELECTION_STATUS_CHANGED, info);
+        }
+        if (mobileAccessibility._isSwitchControlRunning !== info.isSwitchControlRunning) {
+           mobileAccessibility._isSwitchControlRunning = info.isSwitchControlRunning;
+           cordova.fireWindowEvent(MobileAccessibilityNotifications.SWITCH_CONTROL_STATUS_CHANGED, info);
         }
         if (mobileAccessibility._isTouchExplorationEnabled !== info.isTouchExplorationEnabled) {
             mobileAccessibility._isTouchExplorationEnabled = info.isTouchExplorationEnabled;
