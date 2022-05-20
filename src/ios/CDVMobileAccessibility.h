@@ -73,11 +73,12 @@ static const int BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE = 16;
 - (void) isSpeakSelectionEnabled:(CDVInvokedUrlCommand*)command;
 - (void) isSwitchControlRunning:(CDVInvokedUrlCommand*)command;
 - (void) getTextZoom:(CDVInvokedUrlCommand*)command;
-- (void) getZoom:(CDVInvokedUrlCommand*)command;
 - (void) setTextZoom:(CDVInvokedUrlCommand*)command;
 - (void) updateTextZoom:(CDVInvokedUrlCommand*)command;
 - (void) postNotification:(CDVInvokedUrlCommand*)command;
 - (void) start:(CDVInvokedUrlCommand*)command;
 - (void) stop:(CDVInvokedUrlCommand*)command;
+- (void) getUIScreenNativeScale:(CDVInvokedUrlCommand*)command;
+- (void) getUIScreenScale:(CDVInvokedUrlCommand*)command;
 
 @end

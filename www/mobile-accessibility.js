@@ -308,12 +308,21 @@ MobileAccessibility.prototype.isHighContrastEnabled = function(callback) {
 };
 
 /**
- * Asynchronous call to native MobileAccessibility to return the current text zoom percent value for the WebView.
+ * Asynchronous call to native MobileAccessibility to return the current UIScreen.main.nativeScale value for the WebView.
  * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
  */
-MobileAccessibility.prototype.getTextZoom = function(callback) {
-    exec(callback, null, "MobileAccessibility", "getTextZoom", []);
+MobileAccessibility.prototype.getUIScreenNativeScale = function(callback) {
+    exec(callback, null, "MobileAccessibility", "getUIScreenNativeScale", []);
 };
+
+/**
+ * Asynchronous call to native MobileAccessibility to return the current UIScreen.main.scale value for the WebView.
+ * @param {function} callback A callback method to receive the asynchronous result from the native MobileAccessibility.
+ */
+ MobileAccessibility.prototype.getUIScreenScale = function(callback) {
+    exec(callback, null, "MobileAccessibility", "getUIScreenScale", []);
+};
+
 
 /**
  * Asynchronous call to native MobileAccessibility to return the current text zoom percent value for the WebView.
