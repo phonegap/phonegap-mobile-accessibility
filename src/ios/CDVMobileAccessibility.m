@@ -287,20 +287,6 @@
     }];
 }
 
-- (void) getZoom:(CDVInvokedUrlCommand *)command
-{
-    NSLog(@"getZoom");
-
-    double zoom = [self UIScreen.main.nativeScale];
-
-    NSLog(@"getZoom --->  %d%%'", zoom);
-
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble: zoom];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-    }];
-}
-
 -(void) mSetTextZoom:(double)zoom
 {
     // NSLog(@"mSetTextZoom %f%%'", zoom);
