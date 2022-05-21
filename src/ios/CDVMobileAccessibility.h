@@ -78,5 +78,7 @@ static const int BASE_UI_FONT_TEXT_STYLE_BODY_POINT_SIZE = 16;
 - (void) postNotification:(CDVInvokedUrlCommand*)command;
 - (void) start:(CDVInvokedUrlCommand*)command;
 - (void) stop:(CDVInvokedUrlCommand*)command;
+- (void) getUIScreenNativeScale:(CDVInvokedUrlCommand*)command;
+- (void) getUIScreenScale:(CDVInvokedUrlCommand*)command;
 
 @end

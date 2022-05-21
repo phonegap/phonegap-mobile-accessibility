@@ -412,6 +412,26 @@
     }
 }
 
+- (void) getUIScreenNativeScale:(CDVInvokedUrlCommand *)command
+{
+    double nativeScale = UIScreen.mainScreen.nativeScale;
+
+    [self.commandDelegate runInBackground:^{
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble: nativeScale];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }];
+}
+
+- (void) getUIScreenScale:(CDVInvokedUrlCommand *)command
+{
+    double scale = UIScreen.mainScreen.scale;
+
+    [self.commandDelegate runInBackground:^{
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble: scale];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }];
+}
+
 /* Get the current mobile accessibility status. */
 - (NSDictionary*)getMobileAccessibilityStatus
 {
